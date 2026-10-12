@@ -3,7 +3,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI.Overlays
 {
-    // Explica por qué terminó la sesión (expulsado, baneado, el host cerró, sin conexión...).
     public sealed class DialogOverlay : SessionScreen
     {
         private Label _title;

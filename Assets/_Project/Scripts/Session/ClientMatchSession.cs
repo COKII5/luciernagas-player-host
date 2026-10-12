@@ -5,9 +5,9 @@ using Fireflies.Config;
 using Fireflies.Game.Rules;
 using Fireflies.Game.Simulation;
 using Fireflies.Game.State;
+using Fireflies.Net.Connection;
 using Fireflies.Net.Messages;
 using Fireflies.Net.Protocol;
-using Fireflies.Net.Connection;
 using Fireflies.Sync;
 using UnityEngine;
 
@@ -15,27 +15,22 @@ namespace Fireflies.Session
 {
     public sealed class ClientMatchSession : IMatchSession, ISyncDiagnostics
     {
-        private readonly NetworkSettings _networkSettings;
         private readonly GameplaySettings _gameplaySettings;
         private readonly ClientNetwork _network;
         private readonly ClientRoster _roster = new();
-        private readonly SnapshotBuffer _snapshots = new();
-        private readonly SnapshotInterpolator _interpolator = new();
-        private readonly ClientPrediction _prediction;
-        private readonly List<InputCommand> _outgoingCommands = new();
+        private readonly ClientWorldView _world;
         private double _now;
         private bool _hasReceivedRoster;
         private bool _hasEnded;
 
         public ClientMatchSession(NetworkSettings networkSettings, GameplaySettings gameplaySettings, float fixedDeltaTime)
         {
-            _networkSettings = networkSettings;
             _gameplaySettings = gameplaySettings;
-            _prediction = new ClientPrediction(fixedDeltaTime, networkSettings.CorrectionSmoothingRate, networkSettings.SnapCorrectionDistance);
+            _world = new ClientWorldView(networkSettings, fixedDeltaTime);
             Rules = gameplaySettings.CreateDefaultRules();
 
             _network = new ClientNetwork(networkSettings);
-            _network.Connected += accepted => LocalPlayerId = accepted.PlayerId;
+            _network.Connected += accepted => _world.LocalPlayerId = accepted.PlayerId;
             _network.Rejected += reason => End(MapRejection(reason));
             _network.ConnectionAttemptTimedOut += () => End(SessionEndReason.ConnectionFailed);
             _network.Disconnected += reason => End(MapDisconnect(reason));
@@ -45,6 +40,7 @@ namespace Fireflies.Session
         public event Action<PlayerInfo> PlayerJoined;
         public event Action<PlayerInfo> PlayerLeft;
         public event Action RosterChanged;
+        public event Action PingsUpdated;
         public event Action<MatchPhase> PhaseChanged;
         public event Action RulesChanged;
         public event Action<GameEvent> GameEventRaised;
@@ -53,7 +49,7 @@ namespace Fireflies.Session
 
         public bool IsHost => false;
         public bool IsReady => _network.State == ClientConnectionState.Connected && _hasReceivedRoster;
-        public byte LocalPlayerId { get; private set; }
+        public byte LocalPlayerId => _world.LocalPlayerId;
         public MatchPhase Phase { get; private set; }
         public float PhaseSecondsRemaining { get; private set; }
         public MatchRules Rules { get; private set; }
@@ -61,14 +57,14 @@ namespace Fireflies.Session
 
         public bool InterpolationEnabled
         {
-            get => _interpolator.IsInterpolationEnabled;
-            set => _interpolator.IsInterpolationEnabled = value;
+            get => _world.InterpolationEnabled;
+            set => _world.InterpolationEnabled = value;
         }
 
         public int RoundTripMs => _network.RoundTripMs;
-        public int BufferedSnapshots => _snapshots.Count;
+        public int BufferedSnapshots => _world.BufferedSnapshots;
 
-        private bool CanMove => Phase == MatchPhase.Lobby || Phase == MatchPhase.Playing;
+        private MovementTuning Tuning => new MovementTuning(_gameplaySettings, Rules);
 
         public void Connect(IPEndPoint hostEndPoint, string playerName, byte preferredSlot, double now)
         {
@@ -80,7 +76,7 @@ namespace Fireflies.Session
         {
             _now = now;
             _network.Poll(now);
-            _prediction.DecayCorrection(frameDeltaTime);
+            _world.DecayCorrection(frameDeltaTime);
             if (Phase == MatchPhase.Countdown || Phase == MatchPhase.Playing)
             {
                 PhaseSecondsRemaining = Mathf.Max(0f, PhaseSecondsRemaining - frameDeltaTime);
@@ -89,67 +85,21 @@ namespace Fireflies.Session
 
         public void FixedTick(double now, float deltaTime, LocalInput input)
         {
-            if (!IsReady)
+            if (IsReady)
             {
-                return;
+                _network.SendUnreliable(_world.PredictInput(input, Tuning, MatchPhaseRules.AllowsMovement(Phase)));
             }
-
-            MovementTuning tuning = new MovementTuning(_gameplaySettings, Rules);
-            _prediction.PredictNext(input.Move, input.DashPressed, tuning, CanMove);
-            _prediction.CollectRecentCommands(_networkSettings.RedundantInputCommands, _outgoingCommands);
-            _network.SendUnreliable(new InputMessage(_outgoingCommands));
         }
 
         public void FillRenderState(WorldRenderState target, double now, float fixedStepAlpha)
         {
-            double renderTime = _network.Clock.HostTimeAt(now) - _networkSettings.InterpolationDelay;
-            _interpolator.Sample(_snapshots, renderTime, _networkSettings.MaxExtrapolation, target);
-            ApplyPredictedLocalPlayer(target, fixedStepAlpha);
+            _world.Fill(target, _network.Clock.HostTimeAt(now), fixedStepAlpha);
         }
 
         public void Dispose()
         {
             _network.Dispose();
             End(SessionEndReason.LeftByUser);
-        }
-
-        private void ApplyPredictedLocalPlayer(WorldRenderState target, float fixedStepAlpha)
-        {
-            int index = target.Players.FindIndex(player => player.PlayerId == LocalPlayerId);
-            if (index < 0 || !_prediction.HasAuthoritativeState || !TryGetLatestLocalSnapshot(out PlayerSnapshot latest))
-            {
-                return;
-            }
-
-            PlayerMotionState predicted = _prediction.Predicted;
-            PlayerRenderState state = SnapshotInterpolator.ToRenderState(latest);
-            state.Position = _prediction.GetRenderPosition(fixedStepAlpha);
-            state.Facing = predicted.Facing;
-            state.IsDashing = predicted.IsDashing;
-            state.IsStunned = predicted.IsStunned;
-            state.DashCooldownLeft = predicted.DashCooldownLeft;
-            target.Players[index] = state;
-        }
-
-        private bool TryGetLatestLocalSnapshot(out PlayerSnapshot snapshot)
-        {
-            snapshot = default;
-            SnapshotMessage latest = _snapshots.Latest;
-            if (latest == null)
-            {
-                return false;
-            }
-
-            foreach (PlayerSnapshot player in latest.Players)
-            {
-                if (player.PlayerId == LocalPlayerId)
-                {
-                    snapshot = player;
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private void OnPacketReceived(DecodedPacket packet)
@@ -161,7 +111,7 @@ namespace Fireflies.Session
                     break;
                 case PacketType.PingTable when PacketCodec.TryReadPayload(packet, PingTableMessage.Read, out PingTableMessage pings):
                     _roster.ApplyPings(pings);
-                    RosterChanged?.Invoke();
+                    PingsUpdated?.Invoke();
                     break;
                 case PacketType.Snapshot when PacketCodec.TryReadPayload(packet, SnapshotMessage.Read, out SnapshotMessage snapshot):
                     ApplySnapshot(snapshot);
@@ -206,16 +156,10 @@ namespace Fireflies.Session
 
         private void ApplySnapshot(SnapshotMessage snapshot)
         {
-            if (!_snapshots.TryAdd(snapshot))
+            if (_world.TryApplySnapshot(snapshot, Tuning))
             {
-                return;
-            }
-
-            _network.Clock.SynchronizeRoughly(snapshot.HostTime, _now);
-            PhaseSecondsRemaining = snapshot.PhaseSecondsRemaining;
-            if (TryGetLatestLocalSnapshot(out PlayerSnapshot local))
-            {
-                _prediction.Reconcile(local, new MovementTuning(_gameplaySettings, Rules));
+                _network.Clock.ObserveSnapshot(snapshot.HostTime, _now);
+                PhaseSecondsRemaining = snapshot.PhaseSecondsRemaining;
             }
         }
 

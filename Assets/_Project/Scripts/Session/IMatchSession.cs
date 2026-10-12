@@ -13,6 +13,7 @@ namespace Fireflies.Session
         event Action<PlayerInfo> PlayerJoined;
         event Action<PlayerInfo> PlayerLeft;
         event Action RosterChanged;
+        event Action PingsUpdated;
         event Action<MatchPhase> PhaseChanged;
         event Action RulesChanged;
         event Action<GameEvent> GameEventRaised;

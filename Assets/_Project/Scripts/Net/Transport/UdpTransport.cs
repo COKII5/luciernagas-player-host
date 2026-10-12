@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Fireflies.Config;
 using UnityEngine;
 
 namespace Fireflies.Net.Transport
@@ -30,6 +31,11 @@ namespace Fireflies.Net.Transport
         public bool IsOpen => _socket != null;
 
         public int LocalPort => _socket == null ? 0 : ((IPEndPoint)_socket.Client.LocalEndPoint).Port;
+
+        public static UdpTransport FromSettings(NetworkSettings settings)
+        {
+            return new UdpTransport(new NetworkConditionSimulator(settings.SimulatedLatencyMs, settings.SimulatedPacketLossPercent));
+        }
 
         public void Open(int port)
         {
@@ -62,6 +68,16 @@ namespace Fireflies.Net.Transport
             }
             catch (ObjectDisposedException)
             {
+                // El socket se cerró justo al salir de la sesión; ese envío ya no importa.
+            }
+        }
+
+        // Los avisos de salida van sin confirmación (el socket se cierra enseguida), por eso se mandan varias veces.
+        public void SendRepeated(byte[] datagram, IPEndPoint target, int times)
+        {
+            for (int i = 0; i < times; i++)
+            {
+                Send(datagram, target);
             }
         }
 

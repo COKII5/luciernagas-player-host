@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Fireflies.App;
 using Fireflies.Config;
 using Fireflies.Session;
+using Fireflies.Shared;
 using Fireflies.Sync;
 using UnityEngine;
 
@@ -70,7 +71,7 @@ namespace Fireflies.Presentation
                 view.Apply(player, Time.deltaTime);
             }
 
-            RemoveStalePlayers();
+            StaleEntryRemover.RemoveUnseen(_playerViews, _seenPlayers, _stalePlayers, view => Destroy(view.gameObject));
         }
 
         private PlayerView GetOrCreatePlayerView(PlayerInfo info, byte localPlayerId)
@@ -86,24 +87,6 @@ namespace Fireflies.Presentation
             view.ResetMotion();
             _playerViews.Add(info.PlayerId, view);
             return view;
-        }
-
-        private void RemoveStalePlayers()
-        {
-            _stalePlayers.Clear();
-            foreach (byte playerId in _playerViews.Keys)
-            {
-                if (!_seenPlayers.Contains(playerId))
-                {
-                    _stalePlayers.Add(playerId);
-                }
-            }
-
-            foreach (byte playerId in _stalePlayers)
-            {
-                Destroy(_playerViews[playerId].gameObject);
-                _playerViews.Remove(playerId);
-            }
         }
 
         private void SyncFireflies(WorldRenderState state)
@@ -123,25 +106,7 @@ namespace Fireflies.Presentation
                 _fireflyViews.Add(firefly.FireflyId, view);
             }
 
-            RemoveStaleFireflies();
-        }
-
-        private void RemoveStaleFireflies()
-        {
-            _staleFireflies.Clear();
-            foreach (KeyValuePair<ushort, FireflyView> entry in _fireflyViews)
-            {
-                if (!_seenFireflies.Contains(entry.Key))
-                {
-                    _staleFireflies.Add(entry.Key);
-                }
-            }
-
-            foreach (ushort fireflyId in _staleFireflies)
-            {
-                ReturnToPool(_fireflyViews[fireflyId]);
-                _fireflyViews.Remove(fireflyId);
-            }
+            StaleEntryRemover.RemoveUnseen(_fireflyViews, _seenFireflies, _staleFireflies, ReturnToPool);
         }
 
         private FireflyView TakeFromPool(bool isGolden)

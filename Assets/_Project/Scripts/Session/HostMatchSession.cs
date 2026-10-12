@@ -5,9 +5,9 @@ using Fireflies.Game.Flow;
 using Fireflies.Game.Rules;
 using Fireflies.Game.Simulation;
 using Fireflies.Game.State;
+using Fireflies.Net.Connection;
 using Fireflies.Net.Messages;
 using Fireflies.Net.Protocol;
-using Fireflies.Net.Connection;
 using Fireflies.Sync;
 
 namespace Fireflies.Session
@@ -17,15 +17,15 @@ namespace Fireflies.Session
         private readonly NetworkSettings _networkSettings;
         private readonly GameplaySettings _gameplaySettings;
         private readonly HostNetwork _network;
+        private readonly HostReplicator _replicator;
         private readonly HostRoster _roster = new();
         private readonly MatchSimulation _simulation;
         private readonly MatchStateMachine _stateMachine = new();
-        private readonly HostWorldReader _worldReader = new();
         private readonly SimPlayer _localPlayer;
+        private List<PlayerValue> _lastStandings = new();
         private uint _localSequence;
         private uint _tick;
         private double _now;
-        private double _nextPingTableTime;
         private bool _isDisposed;
 
         public HostMatchSession(NetworkSettings networkSettings, GameplaySettings gameplaySettings, string hostName, byte preferredSlot)
@@ -41,6 +41,7 @@ namespace Fireflies.Session
             _network.ClientJoined += OnClientJoined;
             _network.ClientLeft += OnClientLeft;
             _network.GameplayPacketReceived += OnGameplayPacketReceived;
+            _replicator = new HostReplicator(_network, networkSettings);
             _stateMachine.PhaseChanged += OnPhaseChanged;
 
             _roster.TryAssignSlot(preferredSlot, out byte slot);
@@ -51,6 +52,7 @@ namespace Fireflies.Session
         public event Action<PlayerInfo> PlayerJoined;
         public event Action<PlayerInfo> PlayerLeft;
         public event Action RosterChanged;
+        public event Action PingsUpdated;
         public event Action<MatchPhase> PhaseChanged;
         public event Action RulesChanged;
         public event Action<GameEvent> GameEventRaised;
@@ -78,7 +80,10 @@ namespace Fireflies.Session
         {
             _now = now;
             _network.Poll(now);
-            BroadcastPingTableIfDue(now);
+            if (_replicator.TryBroadcastPings(_roster, now))
+            {
+                PingsUpdated?.Invoke();
+            }
         }
 
         public void FixedTick(double now, float deltaTime, LocalInput input)
@@ -96,7 +101,7 @@ namespace Fireflies.Session
             }
 
             _tick++;
-            BroadcastSnapshotIfDue(now);
+            _replicator.BroadcastSnapshotIfDue(_simulation, _tick, now, PhaseSecondsRemaining);
         }
 
         public void FillRenderState(WorldRenderState target, double now, float fixedStepAlpha)
@@ -133,7 +138,9 @@ namespace Fireflies.Session
 
         public void ApplyRules(MatchRules rules)
         {
+            int durationChange = rules.DurationSeconds - _simulation.Rules.DurationSeconds;
             _simulation.Rules = rules.Clone();
+            _stateMachine.ShiftMatchTime(durationChange);
             _network.BroadcastReliable(new RulesMessage(_simulation.Rules), _now);
             RulesChanged?.Invoke();
         }
@@ -175,10 +182,7 @@ namespace Fireflies.Session
 
             PlayerInfo info = _roster.Add(client.PlayerId, slot, client.PlayerName, false);
             _simulation.AddPlayer(client.PlayerId, slot);
-
-            _network.SendReliable(client, new JoinAcceptedMessage(client.PlayerId, slot), _now);
-            _network.SendReliable(client, new RulesMessage(Rules), _now);
-            _network.SendReliable(client, new MatchPhaseMessage(Phase, PhaseSecondsRemaining), _now);
+            _replicator.Welcome(client, slot, Rules, Phase, PhaseSecondsRemaining, _lastStandings, _now);
             _network.BroadcastReliable(_roster.ToRosterMessage(), _now);
 
             PlayerJoined?.Invoke(info);
@@ -201,12 +205,10 @@ namespace Fireflies.Session
 
         private void OnGameplayPacketReceived(ConnectedClient client, DecodedPacket packet)
         {
-            if (packet.Type != PacketType.Input || !PacketCodec.TryReadPayload(packet, InputMessage.Read, out InputMessage input))
+            if (packet.Type == PacketType.Input && PacketCodec.TryReadPayload(packet, InputMessage.Read, out InputMessage input))
             {
-                return;
+                _simulation.FindPlayer(client.PlayerId)?.EnqueueCommands(input.Commands);
             }
-
-            _simulation.FindPlayer(client.PlayerId)?.EnqueueCommands(input.Commands);
         }
 
         private void OnPhaseChanged(MatchPhase phase)
@@ -233,41 +235,10 @@ namespace Fireflies.Session
                 return;
             }
 
-            List<PlayerValue> standings = HostWorldReader.CalculateStandings(_simulation);
-            _network.BroadcastReliable(new MatchResultsMessage(standings), _now);
-            MatchFinished?.Invoke(standings);
+            _lastStandings = HostWorldReader.CalculateStandings(_simulation);
+            _network.BroadcastReliable(new MatchResultsMessage(_lastStandings), _now);
+            MatchFinished?.Invoke(_lastStandings);
             _stateMachine.Finish();
-        }
-
-        private void BroadcastSnapshotIfDue(double now)
-        {
-            if (_tick % _networkSettings.TicksPerSnapshot != 0)
-            {
-                return;
-            }
-
-            SnapshotMessage snapshot = _worldReader.ComposeSnapshot(_simulation, _tick, now, PhaseSecondsRemaining);
-            _network.BroadcastUnreliable(snapshot);
-        }
-
-        private void BroadcastPingTableIfDue(double now)
-        {
-            if (now < _nextPingTableTime)
-            {
-                return;
-            }
-
-            _nextPingTableTime = now + _networkSettings.HeartbeatInterval;
-            foreach (PlayerInfo player in _roster.Players)
-            {
-                if (!player.IsHost && _network.TryGetClient(player.PlayerId, out ConnectedClient client))
-                {
-                    player.RoundTripMs = client.Peer.RoundTripMs;
-                }
-            }
-
-            _network.BroadcastUnreliable(_roster.ToPingTableMessage());
-            RosterChanged?.Invoke();
         }
     }
 }

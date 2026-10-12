@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Fireflies.Config;
 using Fireflies.Game.State;
@@ -20,6 +19,7 @@ namespace Fireflies.UI.Screens
         private const string ClientPauseText = "El anfitrión pausó la partida.";
 
         [SerializeField] private PlayerPalette _palette;
+        [SerializeField] private AdminPanelScreen _adminPanel;
 
         private readonly Dictionary<byte, Label> _scoreValues = new();
         private VisualElement _scoreboard;
@@ -34,11 +34,12 @@ namespace Fireflies.UI.Screens
         private VisualElement _pauseOverlay;
         private Label _pauseText;
         private Button _resumeButton;
-        private VisualElement _hostTools;
+        private Button _pauseAdminButton;
+        private Button _pauseButton;
+        private Button _adminButton;
+        private MatchPhase _phaseBeforePause;
         private int _lastCountdownValue;
         private float _goMessageTimeLeft;
-
-        public event Action AdminPanelRequested;
 
         protected override string RootElementName => "hud";
 
@@ -56,29 +57,40 @@ namespace Fireflies.UI.Screens
             _pauseOverlay = Root.Q("hud-pause-overlay");
             _pauseText = Root.Q<Label>("hud-pause-text");
             _resumeButton = Root.Q<Button>("hud-resume");
-            _hostTools = Root.Q("hud-host-tools");
+            _pauseAdminButton = Root.Q<Button>("hud-pause-admin");
+            _pauseButton = Root.Q<Button>("hud-pause");
+            _adminButton = Root.Q<Button>("hud-admin");
 
             _resumeButton.clicked += () => HostAdministration?.TogglePause();
-            Root.Q<Button>("hud-pause").clicked += () => HostAdministration?.TogglePause();
-            Root.Q<Button>("hud-admin").clicked += () => AdminPanelRequested?.Invoke();
+            _pauseButton.clicked += () => HostAdministration?.TogglePause();
+            _adminButton.clicked += _adminPanel.Open;
+            _pauseAdminButton.clicked += _adminPanel.Open;
+            Root.Q<Button>("hud-leave").clicked += Runner.Leave;
+            Root.Q<Button>("hud-pause-leave").clicked += Runner.Leave;
             UiFactory.MakeButtonsUnfocusable(Root);
         }
 
         protected override void OnSessionAttached(IMatchSession session)
         {
             session.RosterChanged += RebuildScoreboard;
+            session.RulesChanged += UpdateObjective;
             session.PhaseChanged += OnPhaseChanged;
         }
 
         protected override void OnSessionDetached(IMatchSession session)
         {
             session.RosterChanged -= RebuildScoreboard;
+            session.RulesChanged -= UpdateObjective;
             session.PhaseChanged -= OnPhaseChanged;
         }
 
         protected override void OnShown()
         {
-            UiFactory.SetDisplayed(_hostTools, Session != null && Session.IsHost);
+            bool isHost = Session != null && Session.IsHost;
+            UiFactory.SetDisplayed(_pauseButton, isHost);
+            UiFactory.SetDisplayed(_adminButton, isHost);
+            UiFactory.SetDisplayed(_resumeButton, isHost);
+            UiFactory.SetDisplayed(_pauseAdminButton, isHost);
             RebuildScoreboard();
         }
 
@@ -123,12 +135,20 @@ namespace Fireflies.UI.Screens
                 _scoreboard.Add(chip);
             }
 
-            _objective.text = $"Lleva luciérnagas a tu altar  |  Meta: {Session.Rules.TargetScore} puntos";
+            UpdateObjective();
+        }
+
+        private void UpdateObjective()
+        {
+            if (Session != null)
+            {
+                _objective.text = $"Lleva luciérnagas a tu altar  |  Meta: {Session.Rules.TargetScore} puntos";
+            }
         }
 
         private void UpdateTimer()
         {
-            bool isCountingDown = Session.Phase == MatchPhase.Countdown;
+            bool isCountingDown = Session.Phase == MatchPhase.Countdown || (Session.Phase == MatchPhase.Paused && _phaseBeforePause == MatchPhase.Countdown);
             float seconds = isCountingDown ? Session.Rules.DurationSeconds : Session.PhaseSecondsRemaining;
             _timer.text = UiFormat.Clock(seconds);
             _timerBox.EnableInClassList("timer--urgent", Session.Phase == MatchPhase.Playing && seconds <= UrgentSeconds);
@@ -156,6 +176,11 @@ namespace Fireflies.UI.Screens
             if (phase == MatchPhase.Playing && _lastCountdownValue != 0)
             {
                 _goMessageTimeLeft = GoMessageSeconds;
+            }
+
+            if (phase != MatchPhase.Paused)
+            {
+                _phaseBeforePause = phase;
             }
         }
 

@@ -41,11 +41,12 @@ namespace Fireflies.EditorTools
             document.visualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(RootLayoutPath);
 
             MainMenuScreen mainMenu = AddScreen<MainMenuScreen>(root, document, runner, palette);
-            LobbyScreen lobby = AddScreen<LobbyScreen>(root, document, runner, palette);
-            HudScreen hud = AddScreen<HudScreen>(root, document, runner, palette);
-            ResultsScreen results = AddScreen<ResultsScreen>(root, document, runner, palette);
             AdminPanelScreen admin = AddScreen<AdminPanelScreen>(root, document, runner, palette);
-            SerializedFieldWriter.Set(admin, "_hud", hud);
+            LobbyScreen lobby = AddScreen<LobbyScreen>(root, document, runner, palette);
+            SerializedFieldWriter.Set(lobby, "_adminPanel", admin);
+            HudScreen hud = AddScreen<HudScreen>(root, document, runner, palette);
+            SerializedFieldWriter.Set(hud, "_adminPanel", admin);
+            ResultsScreen results = AddScreen<ResultsScreen>(root, document, runner, palette);
             ConnectingOverlay connecting = AddScreen<ConnectingOverlay>(root, document, runner, null);
             DialogOverlay dialog = AddScreen<DialogOverlay>(root, document, runner, null);
             AddScreen<ToastFeed>(root, document, runner, palette);

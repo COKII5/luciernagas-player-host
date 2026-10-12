@@ -80,11 +80,27 @@ namespace Fireflies.App
             return true;
         }
 
-        public void Join(IPEndPoint hostEndPoint, string playerName, byte preferredSlot)
+        public bool TryJoin(IPEndPoint hostEndPoint, string playerName, byte preferredSlot, out string error)
         {
             ClientMatchSession client = new ClientMatchSession(_networkSettings, _gameplaySettings, Time.fixedDeltaTime);
+            try
+            {
+                client.Connect(hostEndPoint, playerName, preferredSlot, Time.timeAsDouble);
+            }
+            catch (SocketException exception)
+            {
+                error = $"No se pudo abrir la conexión ({exception.SocketErrorCode}).";
+                return false;
+            }
+            catch (ArgumentException)
+            {
+                error = "El nombre no es válido.";
+                return false;
+            }
+
+            error = null;
             Begin(client);
-            client.Connect(hostEndPoint, playerName, preferredSlot, Time.timeAsDouble);
+            return true;
         }
 
         public void Leave()

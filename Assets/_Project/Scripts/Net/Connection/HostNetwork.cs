@@ -23,8 +23,7 @@ namespace Fireflies.Net.Connection
             _settings = settings;
             BanList = banList;
             _joinValidator = new JoinRequestValidator(banList, settings.MaxPlayers);
-            NetworkConditionSimulator simulator = new NetworkConditionSimulator(settings.SimulatedLatencyMs, settings.SimulatedPacketLossPercent);
-            _transport = new UdpTransport(simulator);
+            _transport = UdpTransport.FromSettings(settings);
         }
 
         public event Action<ConnectedClient> ClientJoined;
@@ -222,11 +221,7 @@ namespace Fireflies.Net.Connection
 
         private void SendRepeatedNotice(IPEndPoint target, INetMessage notice)
         {
-            byte[] datagram = PacketCodec.EncodeUnreliable(notice);
-            for (int i = 0; i < _settings.DisconnectNoticeRepeats; i++)
-            {
-                _transport.Send(datagram, target);
-            }
+            _transport.SendRepeated(PacketCodec.EncodeUnreliable(notice), target, _settings.DisconnectNoticeRepeats);
         }
     }
 }

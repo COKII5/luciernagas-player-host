@@ -8,7 +8,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI.Screens
 {
-    // Panel del anfitrión: ping de cada jugador, expulsar, banear IP, quitar bans, reglas y pausa.
     public sealed class AdminPanelScreen : SessionScreen
     {
         private const string PauseText = "Pausar partida";
@@ -16,7 +15,6 @@ namespace Fireflies.UI.Screens
         private const string NoBansText = "No hay direcciones baneadas.";
 
         [SerializeField] private PlayerPalette _palette;
-        [SerializeField] private HudScreen _hud;
 
         private PlayerListView _playerList;
         private RulesEditorView _rulesEditor;
@@ -27,6 +25,11 @@ namespace Fireflies.UI.Screens
         public bool IsRequestedOpen { get; private set; }
 
         protected override string RootElementName => "admin";
+
+        public void Open()
+        {
+            IsRequestedOpen = HostAdministration != null;
+        }
 
         protected override void BindElements()
         {
@@ -39,14 +42,7 @@ namespace Fireflies.UI.Screens
             _pauseButton.clicked += () => HostAdministration?.TogglePause();
             _lobbyButton.clicked += ReturnToLobby;
             Root.Q<Button>("admin-close").clicked += Close;
-            _hud.AdminPanelRequested += Toggle;
             UiFactory.MakeButtonsUnfocusable(Root);
-        }
-
-        protected override void OnDisable()
-        {
-            _hud.AdminPanelRequested -= Toggle;
-            base.OnDisable();
         }
 
         protected override void OnSessionAttached(IMatchSession session)
@@ -57,6 +53,7 @@ namespace Fireflies.UI.Screens
             }
 
             session.RosterChanged += RefreshPlayers;
+            session.PingsUpdated += RefreshPings;
             session.RulesChanged += RefreshRules;
             session.PhaseChanged += RefreshPhaseButtons;
             HostAdministration.BanListChanged += RefreshBans;
@@ -71,6 +68,7 @@ namespace Fireflies.UI.Screens
             }
 
             session.RosterChanged -= RefreshPlayers;
+            session.PingsUpdated -= RefreshPings;
             session.RulesChanged -= RefreshRules;
             session.PhaseChanged -= RefreshPhaseButtons;
             host.BanListChanged -= RefreshBans;
@@ -89,13 +87,8 @@ namespace Fireflies.UI.Screens
             bool togglePressed = Keyboard.current != null && Keyboard.current.f1Key.wasPressedThisFrame;
             if (togglePressed && HostAdministration != null)
             {
-                Toggle();
+                IsRequestedOpen = !IsRequestedOpen;
             }
-        }
-
-        private void Toggle()
-        {
-            IsRequestedOpen = !IsRequestedOpen && HostAdministration != null;
         }
 
         private void Close()
@@ -114,6 +107,14 @@ namespace Fireflies.UI.Screens
             if (IsVisible)
             {
                 _playerList.Rebuild(Session.Players, Session.LocalPlayerId);
+            }
+        }
+
+        private void RefreshPings()
+        {
+            if (IsVisible)
+            {
+                _playerList.RefreshPings(Session.Players);
             }
         }
 
@@ -157,8 +158,7 @@ namespace Fireflies.UI.Screens
                 return;
             }
 
-            bool canPause = phase == MatchPhase.Countdown || phase == MatchPhase.Playing || phase == MatchPhase.Paused;
-            _pauseButton.SetEnabled(canPause);
+            _pauseButton.SetEnabled(MatchPhaseRules.IsMatchInProgress(phase));
             _pauseButton.text = phase == MatchPhase.Paused ? ResumeText : PauseText;
             _lobbyButton.SetEnabled(phase != MatchPhase.Lobby);
         }

@@ -8,7 +8,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI
 {
-    // Decide qué pantalla se ve según el estado de la sesión: menú, conectando, sala, partida o resultados.
     public sealed class UiFlowController : MonoBehaviour
     {
         [SerializeField] private UIDocument _document;
@@ -43,7 +42,7 @@ namespace Fireflies.UI
             IMatchSession session = _runner.Session;
             bool isReady = session != null && session.IsReady;
             MatchPhase phase = isReady ? session.Phase : MatchPhase.Lobby;
-            bool isInMatch = isReady && (phase == MatchPhase.Countdown || phase == MatchPhase.Playing || phase == MatchPhase.Paused);
+            bool isInMatch = isReady && MatchPhaseRules.IsMatchInProgress(phase);
 
             _mainMenu.SetVisible(session == null);
             _connecting.SetVisible(session != null && !isReady);

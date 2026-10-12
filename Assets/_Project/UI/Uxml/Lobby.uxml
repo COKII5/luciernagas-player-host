@@ -17,7 +17,10 @@
         <ui:VisualElement class="lobby-footer" picking-mode="Ignore">
             <ui:Button name="lobby-leave" text="Salir de la sala" class="button button--ghost" />
             <ui:Label name="lobby-waiting" text="Esperando a que el anfitrión inicie la partida..." class="waiting-text" />
-            <ui:Button name="lobby-start" text="Iniciar partida" class="button button--primary button--large" />
+            <ui:VisualElement name="lobby-host-actions" class="lobby-host-actions" picking-mode="Ignore">
+                <ui:Button name="lobby-admin" text="Panel del anfitrión (F1)" class="button" />
+                <ui:Button name="lobby-start" text="Iniciar partida" class="button button--primary button--large" />
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

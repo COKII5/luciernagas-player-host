@@ -1,33 +1,37 @@
+using System;
+
 namespace Fireflies.Sync
 {
-    // Estima el reloj del host para ubicar los snapshots en una misma línea de tiempo.
     public sealed class NetClock
     {
         private const double OffsetSmoothing = 0.1;
 
+        private readonly double _resyncThreshold;
         private double _offset;
         private bool _isSynchronized;
 
-        public bool IsSynchronized => _isSynchronized;
-
-        public void SynchronizeRoughly(double hostTime, double localNow)
+        public NetClock(double resyncThreshold)
         {
-            if (_isSynchronized)
-            {
-                return;
-            }
+            _resyncThreshold = resyncThreshold;
+        }
 
-            _offset = hostTime - localNow;
-            _isSynchronized = true;
+        // Un snapshot no puede llegar "del futuro" ni con mucho atraso; si pasa, alguno de los dos
+        // equipos se trabó (p. ej. al arrastrar la ventana) y conviene saltar en vez de corregir de a poco.
+        public void ObserveSnapshot(double snapshotHostTime, double localNow)
+        {
+            double drift = HostTimeAt(localNow) - snapshotHostTime;
+            if (!_isSynchronized || Math.Abs(drift) > _resyncThreshold)
+            {
+                Resynchronize(snapshotHostTime - localNow);
+            }
         }
 
         public void AddSample(double hostTime, int roundTripMs, double localNow)
         {
             double sampleOffset = hostTime + roundTripMs / 2000.0 - localNow;
-            if (!_isSynchronized)
+            if (!_isSynchronized || Math.Abs(sampleOffset - _offset) > _resyncThreshold)
             {
-                _offset = sampleOffset;
-                _isSynchronized = true;
+                Resynchronize(sampleOffset);
                 return;
             }
 
@@ -37,6 +41,12 @@ namespace Fireflies.Sync
         public double HostTimeAt(double localNow)
         {
             return localNow + _offset;
+        }
+
+        private void Resynchronize(double offset)
+        {
+            _offset = offset;
+            _isSynchronized = true;
         }
     }
 }

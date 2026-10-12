@@ -57,8 +57,9 @@ Es de noche en un claro del bosque. Cada jugador es un **farolero** de un color 
 | WASD / flechas / stick izquierdo | Moverse |
 | Espacio / botón A | Embestida |
 | TAB (mantener) | Ver el ping de todos los jugadores |
-| P | Pausar / reanudar (solo anfitrión) |
-| F1 | Panel del anfitrión (solo anfitrión) |
+| P o botón «Pausa» | Pausar / reanudar (solo anfitrión) |
+| F1 o botón «Panel» | Panel del anfitrión (solo anfitrión; también desde la sala y la pausa) |
+| Botón «Salir» | Salir de la sala en cualquier momento |
 | F3 / F4 | Datos de red / apagar la interpolación para comparar (cliente) |
 
 ### Opciones por línea de comandos (pruebas)
@@ -108,15 +109,15 @@ flowchart LR
 - **Host autoritativo:** solo el anfitrión simula recogidas, golpes, puntos y fin de partida, así no hay estados distintos entre clientes.
 - **Interpolación de snapshots:** los demás jugadores y las luciérnagas se dibujan 100 ms "en el pasado", interpolando entre los dos snapshots que rodean ese instante. Si dejan de llegar paquetes se extrapola hasta 250 ms.
 - **Predicción en el cliente con reconciliación:** tu farolero se mueve al instante con tu entrada. Cuando llega el estado del host se reaplican los comandos que aún no confirmó y cualquier diferencia se corrige suavemente en vez de dar un salto.
-- **Reloj compartido:** cada cliente estima el reloj del host con el ping para ubicar los snapshots en una misma línea de tiempo.
+- **Reloj compartido:** cada cliente estima el reloj del host con el ping para ubicar los snapshots en una misma línea de tiempo. Si alguno de los equipos se traba (por ejemplo al arrastrar la ventana), el reloj se resincroniza de golpe en vez de arrastrar el error.
 - Con **F3** se ven el RTT y los snapshots en buffer, y con **F4** se apaga la interpolación para notar la diferencia.
 
 ### Funcionalidades administrativas del anfitrión (las 5)
 
-1. **Expulsar** jugadores desde el panel del anfitrión (F1).
+1. **Expulsar** jugadores desde el panel del anfitrión (botón «Panel» o F1, disponible en la sala, en la partida y en la pausa).
 2. **Ver el ping** de cada jugador: en la sala de espera, en el panel del anfitrión y con TAB durante la partida.
 3. **Pausar** la partida (P o el botón de pausa): todos ven el aviso de pausa y nada se mueve.
-4. **Modificar las reglas:** puntos para ganar, duración, frecuencia de aparición, máximo de luciérnagas, capacidad del farol, recarga de la embestida y activar o desactivar la embestida. Se ajustan en la sala de espera o en el panel durante la partida.
+4. **Modificar las reglas:** puntos para ganar, duración, frecuencia de aparición, máximo de luciérnagas, capacidad del farol, recarga de la embestida y activar o desactivar la embestida. Se ajustan en la sala de espera o en el panel durante la partida; si se cambia la duración con la partida en curso, el reloj se corre en la misma diferencia.
 5. **Banear IP permanentemente:** la IP se guarda en disco (`banned_addresses.json` en la carpeta de datos del juego) y se rechaza en futuras conexiones, incluso tras reiniciar. Desde el panel se puede quitar el ban.
 
 ### Flujo completo de juego
@@ -167,6 +168,7 @@ Toda la configuración (puerto, tasas de envío, tiempos de espera, valores de j
 
 - **Estabilidad:** anfitrión + 2 clientes durante 5,5 minutos seguidos (dos partidas completas con reinicio automático), sin desconexiones ni excepciones; RTT local de 16 a 30 ms.
 - Ciclo completo varias veces: sala → cuenta regresiva → partida → resultados → nueva partida.
+- Quien entra durante la pantalla de resultados recibe el podio de la última partida.
 - Entrada y salida de jugadores a mitad de partida.
 
 ## Errores y limitaciones conocidos

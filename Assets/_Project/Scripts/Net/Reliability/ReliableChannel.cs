@@ -3,7 +3,6 @@ using Fireflies.Net.Protocol;
 
 namespace Fireflies.Net.Reliability
 {
-    // Entrega confiable y en orden sobre UDP: número de secuencia + ACK + reenvío hasta recibir el ACK.
     public sealed class ReliableChannel
     {
         private const int MaxBufferedOutOfOrder = 256;

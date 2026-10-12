@@ -22,8 +22,8 @@ namespace Fireflies.Net.Connection
         public ClientNetwork(NetworkSettings settings)
         {
             _settings = settings;
-            NetworkConditionSimulator simulator = new NetworkConditionSimulator(settings.SimulatedLatencyMs, settings.SimulatedPacketLossPercent);
-            _transport = new UdpTransport(simulator);
+            _transport = UdpTransport.FromSettings(settings);
+            Clock = new NetClock(settings.ClockResyncThreshold);
         }
 
         public event Action<JoinAcceptedMessage> Connected;
@@ -33,7 +33,7 @@ namespace Fireflies.Net.Connection
         public event Action<DecodedPacket> PacketReceived;
 
         public ClientConnectionState State { get; private set; }
-        public NetClock Clock { get; } = new();
+        public NetClock Clock { get; }
         public int RoundTripMs => _hostPeer?.RoundTripMs ?? 0;
 
         public void Connect(IPEndPoint hostEndPoint, string playerName, byte preferredSlot, double now)
@@ -75,14 +75,6 @@ namespace Fireflies.Net.Connection
             }
         }
 
-        public void SendReliable(INetMessage message, double now)
-        {
-            if (State == ClientConnectionState.Connected)
-            {
-                _hostPeer.SendReliable(message, now);
-            }
-        }
-
         public void SendUnreliable(INetMessage message)
         {
             if (State == ClientConnectionState.Connected)
@@ -93,13 +85,11 @@ namespace Fireflies.Net.Connection
 
         public void Dispose()
         {
-            if (State == ClientConnectionState.Connected)
+            // También al cancelar mientras conecta: el host pudo haber registrado ya al jugador.
+            if (State != ClientConnectionState.Disconnected)
             {
-                DisconnectMessage goodbye = new DisconnectMessage(DisconnectReason.ClientLeft);
-                for (int i = 0; i < _settings.DisconnectNoticeRepeats; i++)
-                {
-                    _hostPeer.SendUnreliable(goodbye);
-                }
+                byte[] goodbye = PacketCodec.EncodeUnreliable(new DisconnectMessage(DisconnectReason.ClientLeft));
+                _transport.SendRepeated(goodbye, _hostPeer.EndPoint, _settings.DisconnectNoticeRepeats);
             }
 
             Close();

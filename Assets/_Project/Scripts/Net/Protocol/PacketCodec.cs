@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Fireflies.Net.Protocol
 {
-    // Cabecera: protocolo (2) | canal (1) | secuencia (2) | tipo (1) | payload
     public static class PacketCodec
     {
         private const int ProtocolIdOffset = 0;

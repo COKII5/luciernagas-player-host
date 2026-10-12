@@ -34,11 +34,12 @@ namespace Fireflies.UI.Widgets
             return button;
         }
 
-        public static Button IconButton(string iconClass, string tooltip, Action onClick)
+        public static Button LabeledIconButton(string iconClass, string text, Action onClick, params string[] classes)
         {
-            Button button = Button(string.Empty, onClick, "icon-button", "icon-button--small");
-            button.tooltip = tooltip;
+            Button button = Button(string.Empty, onClick, classes);
+            button.AddToClassList("labeled-button");
             button.Add(Element("icon", "icon--small", iconClass));
+            button.Add(Label(text));
             return button;
         }
 

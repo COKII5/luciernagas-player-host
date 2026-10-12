@@ -1,8 +1,7 @@
 using System;
 using System.IO;
-using Fireflies.Net.Protocol;
-using UnityEngine;
 using Fireflies.Shared;
+using UnityEngine;
 
 namespace Fireflies.Game.Rules
 {

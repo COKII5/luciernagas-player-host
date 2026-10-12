@@ -5,7 +5,6 @@ using UnityEngine.Rendering;
 
 namespace Fireflies.EditorTools
 {
-    // Arma los prefabs del jugador y de las luciérnagas a partir de los FBX de Blender.
     public sealed class PrefabFactory
     {
         private const string ModelsFolder = "Assets/_Project/Art/Models";

@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Fireflies.Game.Simulation
 {
-    // Un altar por slot (y por color) en las cuatro diagonales del claro.
     public sealed class ArenaLayout
     {
         public const int SlotCount = 4;

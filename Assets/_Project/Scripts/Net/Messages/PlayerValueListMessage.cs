@@ -17,7 +17,6 @@ namespace Fireflies.Net.Messages
         public ushort Value { get; }
     }
 
-    // Base de los mensajes que son "un número por jugador" (ping, resultados).
     public abstract class PlayerValueListMessage : INetMessage
     {
         protected PlayerValueListMessage(IReadOnlyList<PlayerValue> entries)

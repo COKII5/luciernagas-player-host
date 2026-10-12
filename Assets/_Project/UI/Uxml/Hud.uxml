@@ -6,13 +6,16 @@
                 <ui:VisualElement class="icon icon--timer" />
                 <ui:Label name="hud-timer" text="3:00" class="timer__value" />
             </ui:VisualElement>
-            <ui:VisualElement name="hud-host-tools" class="hud-host-tools" picking-mode="Ignore">
-                <ui:Button name="hud-pause" tooltip="Pausar o reanudar (P)" class="icon-button">
-                    <ui:VisualElement class="icon icon--pause" picking-mode="Ignore" />
+            <ui:VisualElement class="hud-tools" picking-mode="Ignore">
+                <ui:Button name="hud-pause" class="button button--small labeled-button">
+                    <ui:VisualElement class="icon icon--small icon--pause" picking-mode="Ignore" />
+                    <ui:Label text="Pausa (P)" picking-mode="Ignore" />
                 </ui:Button>
-                <ui:Button name="hud-admin" tooltip="Panel del anfitrión (F1)" class="icon-button">
-                    <ui:VisualElement class="icon icon--settings" picking-mode="Ignore" />
+                <ui:Button name="hud-admin" class="button button--small labeled-button">
+                    <ui:VisualElement class="icon icon--small icon--settings" picking-mode="Ignore" />
+                    <ui:Label text="Panel (F1)" picking-mode="Ignore" />
                 </ui:Button>
+                <ui:Button name="hud-leave" text="Salir" class="button button--small button--ghost" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:Label name="hud-objective" class="objective" picking-mode="Ignore" />
@@ -36,6 +39,8 @@
                 <ui:Label text="Partida en pausa" class="panel__title" />
                 <ui:Label name="hud-pause-text" class="dialog__text" />
                 <ui:Button name="hud-resume" text="Reanudar" class="button button--primary" />
+                <ui:Button name="hud-pause-admin" text="Panel del anfitrión" class="button" />
+                <ui:Button name="hud-pause-leave" text="Salir de la sala" class="button button--ghost" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

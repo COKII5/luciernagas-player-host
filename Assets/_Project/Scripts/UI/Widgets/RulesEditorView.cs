@@ -5,7 +5,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI.Widgets
 {
-    // Cada regla es una fila "etiqueta  [-] valor [+]". Los clientes ven la misma tabla sin botones.
     public sealed class RulesEditorView
     {
         private const string ReadOnlyClass = "rules-editor--readonly";

@@ -6,7 +6,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI.Widgets
 {
-    // Filas con retrato, nombre, color y ping. En modo administrador agrega expulsar y banear.
     public sealed class PlayerListView
     {
         private const string LocalSuffix = " (tú)";
@@ -75,10 +74,8 @@ namespace Fireflies.UI.Widgets
             if (ShowsAdminActions && !player.IsHost)
             {
                 byte playerId = player.PlayerId;
-                row.Add(UiFactory.IconButton("icon--kick", "Expulsar", () => _onKick(playerId)));
-                Button ban = UiFactory.IconButton("icon--ban", "Banear IP", () => _onBan(playerId));
-                ban.Q(className: "icon").AddToClassList("icon--danger");
-                row.Add(ban);
+                row.Add(UiFactory.LabeledIconButton("icon--kick", "Expulsar", () => _onKick(playerId), "button", "button--small"));
+                row.Add(UiFactory.LabeledIconButton("icon--ban", "Banear", () => _onBan(playerId), "button", "button--small", "button--danger"));
             }
 
             return row;

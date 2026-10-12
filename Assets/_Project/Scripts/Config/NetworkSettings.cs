@@ -24,6 +24,7 @@ namespace Fireflies.Config
         [SerializeField, Range(1, 8)] private int _maxInputBacklog = 4;
         [SerializeField, Min(0.1f)] private float _correctionSmoothingRate = 12f;
         [SerializeField, Min(0.1f)] private float _snapCorrectionDistance = 3f;
+        [SerializeField, Range(0.1f, 2f)] private float _clockResyncThreshold = 0.35f;
 
         [Header("Network condition simulation (testing only)")]
         [SerializeField, Range(0, 500)] private int _simulatedLatencyMs;
@@ -45,6 +46,7 @@ namespace Fireflies.Config
         public int MaxInputBacklog => _maxInputBacklog;
         public float CorrectionSmoothingRate => _correctionSmoothingRate;
         public float SnapCorrectionDistance => _snapCorrectionDistance;
+        public float ClockResyncThreshold => _clockResyncThreshold;
         public int SimulatedLatencyMs => _simulatedLatencyMs;
         public int SimulatedPacketLossPercent => _simulatedPacketLossPercent;
     }

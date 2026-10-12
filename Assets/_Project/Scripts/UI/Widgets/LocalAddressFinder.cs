@@ -4,7 +4,6 @@ using System.Net.Sockets;
 
 namespace Fireflies.UI.Widgets
 {
-    // IPs de este equipo en la red local, para que el anfitrión sepa cuál compartir.
     public static class LocalAddressFinder
     {
         public static List<string> FindIPv4Addresses()

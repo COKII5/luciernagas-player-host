@@ -1,5 +1,3 @@
-/* Estilo "farol nocturno": paneles azul noche con borde ámbar y texto cálido. */
-
 :root {
     --night: #1B2440;
     --night-deep: #0E1427;
@@ -33,8 +31,6 @@
     bottom: 0;
 }
 
-/* ---------- Pantallas ---------- */
-
 .screen {
     position: absolute;
     left: 0;
@@ -58,8 +54,6 @@
     align-items: center;
     justify-content: center;
 }
-
-/* ---------- Tipografía ---------- */
 
 .title-font {
     -unity-font: url("../../Art/Fonts/Inter-SemiBold.ttf");
@@ -116,8 +110,6 @@
     min-height: 26px;
 }
 
-/* ---------- Paneles ---------- */
-
 .panel {
     background-image: url("../../Art/UI/Panels/PanelFrame.png");
     -unity-slice-left: 64;
@@ -145,8 +137,6 @@
     background-color: rgba(255, 179, 71, 0.25);
     margin: 16px 0;
 }
-
-/* ---------- Botones ---------- */
 
 .button {
     background-image: url("../../Art/UI/Panels/ButtonFrameNormal.png");
@@ -214,6 +204,30 @@
     margin: 0 4px;
 }
 
+.labeled-button {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.labeled-button > .icon {
+    margin-right: 6px;
+}
+
+.labeled-button > Label {
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+}
+
+.button--danger > .icon {
+    -unity-background-image-tint-color: var(--bad);
+}
+
+.button--danger > Label {
+    color: var(--bad);
+}
+
 .icon-button {
     background-image: url("../../Art/UI/Panels/SlotFrame.png");
     -unity-slice-left: 32;
@@ -242,8 +256,6 @@
     margin-left: 6px;
 }
 
-/* ---------- Íconos ---------- */
-
 .icon {
     width: 30px;
     height: 30px;
@@ -269,8 +281,6 @@
 .icon--settings { background-image: url("../../Art/UI/Icons/IconSettings.png"); }
 .icon--timer { background-image: url("../../Art/UI/Icons/IconTimer.png"); }
 .icon--player { background-image: url("../../Art/UI/Icons/IconPlayer.png"); }
-
-/* ---------- Campos de texto ---------- */
 
 .field {
     margin: 4px 0 10px 0;
@@ -322,8 +332,6 @@
     flex-grow: 0;
     margin-right: 0;
 }
-
-/* ---------- Menú principal ---------- */
 
 .menu-backdrop {
     position: absolute;
@@ -444,8 +452,6 @@
     white-space: normal;
 }
 
-/* ---------- Sala de espera ---------- */
-
 .lobby-header {
     position: absolute;
     top: 28px;
@@ -478,8 +484,6 @@
     justify-content: space-between;
     align-items: center;
 }
-
-/* ---------- Lista de jugadores ---------- */
 
 .player-list {
     flex-direction: column;
@@ -535,8 +539,6 @@
 .ping--medium { color: var(--gold); }
 .ping--bad { color: var(--bad); }
 
-/* ---------- Editor de reglas ---------- */
-
 .rule-row {
     flex-direction: row;
     align-items: center;
@@ -575,8 +577,6 @@
 .rules-editor--readonly .rule-step {
     display: none;
 }
-
-/* ---------- HUD ---------- */
 
 .hud-top {
     position: absolute;
@@ -641,10 +641,23 @@
     color: var(--bad);
 }
 
-.hud-host-tools {
+.hud-tools {
     flex-direction: row;
     width: 760px;
     justify-content: flex-end;
+}
+
+.hud-tools > .button {
+    margin: 0 0 0 8px;
+}
+
+.lobby-host-actions {
+    flex-direction: row;
+    align-items: center;
+}
+
+.lobby-host-actions > .button {
+    margin-left: 14px;
 }
 
 .objective {
@@ -774,8 +787,6 @@
     margin-bottom: 16px;
 }
 
-/* ---------- Resultados ---------- */
-
 .screen--results {
     align-items: center;
     justify-content: center;
@@ -853,8 +864,6 @@
     margin: 0 8px;
 }
 
-/* ---------- Panel del anfitrión ---------- */
-
 .admin-card {
     width: 1100px;
 }
@@ -897,8 +906,6 @@
     font-size: 17px;
     -unity-font-style: italic;
 }
-
-/* ---------- Superposiciones ---------- */
 
 .toast-stack {
     position: absolute;

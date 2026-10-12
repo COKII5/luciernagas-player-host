@@ -15,13 +15,14 @@ namespace Fireflies.UI.Screens
         private const string NoNetworkText = "No se encontró una red local; los demás no podrán unirse.";
 
         [SerializeField] private PlayerPalette _palette;
+        [SerializeField] private AdminPanelScreen _adminPanel;
 
         private PlayerListView _playerList;
         private RulesEditorView _rulesEditor;
         private Label _address;
         private Label _rulesHint;
         private Label _waiting;
-        private Button _startButton;
+        private VisualElement _hostActions;
 
         protected override string RootElementName => "lobby";
 
@@ -32,8 +33,9 @@ namespace Fireflies.UI.Screens
             _address = Root.Q<Label>("lobby-address");
             _rulesHint = Root.Q<Label>("lobby-rules-hint");
             _waiting = Root.Q<Label>("lobby-waiting");
-            _startButton = Root.Q<Button>("lobby-start");
-            _startButton.clicked += () => HostAdministration?.StartMatch();
+            _hostActions = Root.Q("lobby-host-actions");
+            Root.Q<Button>("lobby-start").clicked += () => HostAdministration?.StartMatch();
+            Root.Q<Button>("lobby-admin").clicked += _adminPanel.Open;
             Root.Q<Button>("lobby-leave").clicked += Runner.Leave;
             UiFactory.MakeButtonsUnfocusable(Root);
         }
@@ -41,12 +43,14 @@ namespace Fireflies.UI.Screens
         protected override void OnSessionAttached(IMatchSession session)
         {
             session.RosterChanged += RefreshPlayers;
+            session.PingsUpdated += RefreshPings;
             session.RulesChanged += RefreshRules;
         }
 
         protected override void OnSessionDetached(IMatchSession session)
         {
             session.RosterChanged -= RefreshPlayers;
+            session.PingsUpdated -= RefreshPings;
             session.RulesChanged -= RefreshRules;
         }
 
@@ -58,7 +62,7 @@ namespace Fireflies.UI.Screens
             }
 
             bool isHost = Session.IsHost;
-            UiFactory.SetDisplayed(_startButton, isHost);
+            UiFactory.SetDisplayed(_hostActions, isHost);
             UiFactory.SetDisplayed(_waiting, !isHost);
             _rulesHint.text = isHost ? HostRulesHint : ClientRulesHint;
             _address.text = isHost ? DescribeHostAddress() : $"Conectado a la sala de {Session.FindHost()?.PlayerName}";
@@ -74,6 +78,14 @@ namespace Fireflies.UI.Screens
             }
 
             _playerList.Rebuild(Session.Players, Session.LocalPlayerId);
+        }
+
+        private void RefreshPings()
+        {
+            if (IsVisible && Session != null)
+            {
+                _playerList.RefreshPings(Session.Players);
+            }
         }
 
         private void RefreshRules()

@@ -4,6 +4,7 @@ using Fireflies.Game.Simulation;
 using Fireflies.Game.State;
 using Fireflies.Presentation;
 using Fireflies.Session;
+using Fireflies.Shared;
 using Fireflies.Sync;
 using Fireflies.UI.Widgets;
 using UnityEngine;
@@ -11,7 +12,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI.Overlays
 {
-    // Nombres sobre cada farolero y puntaje sobre cada altar, proyectados de mundo a pantalla.
     public sealed class WorldLabelsOverlay : SessionScreen
     {
         private const string LocalPlayerName = "Tú";
@@ -67,7 +67,7 @@ namespace Fireflies.UI.Overlays
                 }
             }
 
-            RemoveUnseenLabels();
+            StaleEntryRemover.RemoveUnseen(_nameLabels, _seen, _staleLabels, label => label.RemoveFromHierarchy());
         }
 
         private void UpdateAltarLabels(WorldRenderState state)
@@ -101,24 +101,6 @@ namespace Fireflies.UI.Overlays
             }
 
             return label;
-        }
-
-        private void RemoveUnseenLabels()
-        {
-            _staleLabels.Clear();
-            foreach (byte playerId in _nameLabels.Keys)
-            {
-                if (!_seen.Contains(playerId))
-                {
-                    _staleLabels.Add(playerId);
-                }
-            }
-
-            foreach (byte playerId in _staleLabels)
-            {
-                _nameLabels[playerId].RemoveFromHierarchy();
-                _nameLabels.Remove(playerId);
-            }
         }
 
         private void Place(VisualElement label, Vector3 worldPosition)

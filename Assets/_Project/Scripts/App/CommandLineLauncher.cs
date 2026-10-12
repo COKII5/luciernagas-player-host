@@ -1,5 +1,6 @@
 using System.Net;
 using Fireflies.Game.State;
+using Fireflies.Net.Connection;
 using Fireflies.Session;
 using UnityEngine;
 
@@ -88,7 +89,8 @@ namespace Fireflies.App
         private void StartRequestedSession()
         {
             int port = _options.Port ?? _runner.NetworkSettings.DefaultPort;
-            string playerName = _options.PlayerName ?? DefaultNamePrefix + Random.Range(MinRandomNameSuffix, MaxRandomNameSuffix);
+            string requestedName = PlayerNameRules.Normalize(_options.PlayerName);
+            string playerName = PlayerNameRules.IsValid(requestedName) ? requestedName : DefaultNamePrefix + Random.Range(MinRandomNameSuffix, MaxRandomNameSuffix);
             byte slot = _options.Slot ?? 0;
 
             if (_options.HostRequested)
@@ -101,7 +103,10 @@ namespace Fireflies.App
                 return;
             }
 
-            _runner.Join(new IPEndPoint(_options.JoinAddress, port), playerName, slot);
+            if (!_runner.TryJoin(new IPEndPoint(_options.JoinAddress, port), playerName, slot, out string joinError))
+            {
+                Debug.LogError($"[Launcher] {joinError}");
+            }
         }
 
         private void AutoStartMatches(IMatchSession session, IHostAdministration host)

@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 
 namespace Fireflies.EditorTools
 {
-    // Materiales URP que reemplazan a los de Blender. Los nombres coinciden con los slots de los FBX.
+    // Los nombres tienen que coincidir con los slots de material de los FBX exportados desde Blender.
     public sealed class MaterialLibrary
     {
         private const string Folder = "Assets/_Project/Art/Materials";

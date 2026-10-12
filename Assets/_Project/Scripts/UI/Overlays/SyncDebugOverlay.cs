@@ -6,7 +6,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI.Overlays
 {
-    // F3 muestra datos de red; con F4 un cliente apaga la interpolación para comparar a simple vista.
     public sealed class SyncDebugOverlay : SessionScreen
     {
         [SerializeField, Min(0.05f)] private float _refreshInterval = 0.25f;

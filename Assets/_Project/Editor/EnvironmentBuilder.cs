@@ -8,7 +8,6 @@ using UnityEngine.Rendering.Universal;
 
 namespace Fireflies.EditorTools
 {
-    // Claro de bosque nocturno: suelo, anillo de árboles, decoración, altares, luces, niebla y postproceso.
     public sealed class EnvironmentBuilder
     {
         private const int RandomSeed = 20261012;

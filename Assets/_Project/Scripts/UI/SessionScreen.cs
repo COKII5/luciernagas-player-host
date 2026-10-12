@@ -5,7 +5,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI
 {
-    // Base de cada pantalla: busca su raíz en el documento y se engancha/desengancha de la sesión activa.
     public abstract class SessionScreen : MonoBehaviour
     {
         private const string HiddenClass = "screen--hidden";

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Fireflies.EditorTools
 {
-    // Ajustes de importación del arte: sprites de UI sin mipmaps y modelos con materiales URP.
     public static class ArtImportSetup
     {
         private const string UiFolder = "Assets/_Project/Art/UI";

@@ -24,7 +24,7 @@ namespace Fireflies.UI.Widgets
             label.RemoveFromClassList(PingBadClass);
             if (isHost)
             {
-                label.text = "host";
+                label.text = "local";
                 label.AddToClassList(PingGoodClass);
                 return;
             }

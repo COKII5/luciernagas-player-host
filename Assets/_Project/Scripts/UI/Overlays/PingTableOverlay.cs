@@ -7,7 +7,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI.Overlays
 {
-    // Mientras se mantiene TAB, cualquier jugador ve la latencia de todos.
     public sealed class PingTableOverlay : SessionScreen
     {
         [SerializeField] private PlayerPalette _palette;
@@ -25,11 +24,13 @@ namespace Fireflies.UI.Overlays
         protected override void OnSessionAttached(IMatchSession session)
         {
             session.RosterChanged += Refresh;
+            session.PingsUpdated += RefreshPings;
         }
 
         protected override void OnSessionDetached(IMatchSession session)
         {
             session.RosterChanged -= Refresh;
+            session.PingsUpdated -= RefreshPings;
             SetOpen(false);
         }
 
@@ -49,6 +50,14 @@ namespace Fireflies.UI.Overlays
             _isOpen = isOpen;
             UiFactory.SetDisplayed(Root, isOpen);
             Refresh();
+        }
+
+        private void RefreshPings()
+        {
+            if (_isOpen && Session != null)
+            {
+                _list.RefreshPings(Session.Players);
+            }
         }
 
         private void Refresh()

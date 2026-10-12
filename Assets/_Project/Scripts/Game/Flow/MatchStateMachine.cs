@@ -6,6 +6,8 @@ namespace Fireflies.Game.Flow
     // Lobby -> Countdown -> Playing <-> Paused -> Results -> (Countdown | Lobby). Solo corre en el host.
     public sealed class MatchStateMachine
     {
+        private const float MinSecondsAfterRuleChange = 1f;
+
         private MatchPhase _phaseBeforePause;
 
         public event Action<MatchPhase> PhaseChanged;
@@ -13,10 +15,11 @@ namespace Fireflies.Game.Flow
         public MatchPhase Phase { get; private set; } = MatchPhase.Lobby;
         public float SecondsRemaining { get; private set; }
 
-        public bool AllowsMovement => Phase == MatchPhase.Lobby || Phase == MatchPhase.Playing;
+        public bool AllowsMovement => MatchPhaseRules.AllowsMovement(Phase);
         public bool HasTimeExpired => Phase == MatchPhase.Playing && SecondsRemaining <= 0f;
-        public bool CanStartMatch => Phase == MatchPhase.Lobby || Phase == MatchPhase.Results;
-        public bool CanTogglePause => Phase == MatchPhase.Countdown || Phase == MatchPhase.Playing || Phase == MatchPhase.Paused;
+        public bool CanStartMatch => MatchPhaseRules.CanStartMatch(Phase);
+
+        private bool IsClockRunningOrPaused => Phase == MatchPhase.Playing || (Phase == MatchPhase.Paused && _phaseBeforePause == MatchPhase.Playing);
 
         public void Tick(float deltaTime, int matchDurationSeconds)
         {
@@ -46,10 +49,19 @@ namespace Fireflies.Game.Flow
             {
                 Enter(_phaseBeforePause, SecondsRemaining);
             }
-            else if (CanTogglePause)
+            else if (MatchPhaseRules.IsMatchInProgress(Phase))
             {
                 _phaseBeforePause = Phase;
                 Enter(MatchPhase.Paused, SecondsRemaining);
+            }
+        }
+
+        // Si el host cambia la duración en plena partida, el reloj se corre en la misma diferencia.
+        public void ShiftMatchTime(float deltaSeconds)
+        {
+            if (IsClockRunningOrPaused)
+            {
+                SecondsRemaining = Math.Max(MinSecondsAfterRuleChange, SecondsRemaining + deltaSeconds);
             }
         }
 

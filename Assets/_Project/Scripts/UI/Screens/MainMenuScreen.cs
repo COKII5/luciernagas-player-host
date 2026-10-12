@@ -124,7 +124,10 @@ namespace Fireflies.UI.Screens
             }
 
             SavePreferences();
-            Runner.Join(new IPEndPoint(address, port), playerName, _selectedSlot);
+            if (!Runner.TryJoin(new IPEndPoint(address, port), playerName, _selectedSlot, out string error))
+            {
+                ShowStatus(error);
+            }
         }
 
         private bool TryReadName(out string playerName)

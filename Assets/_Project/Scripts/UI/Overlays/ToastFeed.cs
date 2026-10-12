@@ -8,7 +8,6 @@ using UnityEngine.UIElements;
 
 namespace Fireflies.UI.Overlays
 {
-    // Avisos cortos en la esquina: quién entró o salió, depósitos, golpes y la luciérnaga dorada.
     public sealed class ToastFeed : SessionScreen
     {
         private const long FadeOutMilliseconds = 400;

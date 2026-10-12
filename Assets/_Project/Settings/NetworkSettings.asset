@@ -28,5 +28,6 @@ MonoBehaviour:
   _maxInputBacklog: 4
   _correctionSmoothingRate: 12
   _snapCorrectionDistance: 3
+  _clockResyncThreshold: 0.35
   _simulatedLatencyMs: 0
   _simulatedPacketLossPercent: 0
