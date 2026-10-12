@@ -1,0 +1,59 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="main-menu" class="screen">
+        <ui:VisualElement class="menu-backdrop" picking-mode="Ignore" />
+        <ui:VisualElement class="menu-layout">
+            <ui:VisualElement class="brand">
+                <ui:VisualElement class="brand__icon" />
+                <ui:Label text="LUCIÉRNAGAS" class="brand__title" />
+                <ui:Label text="Atrapa la luz del bosque antes que los demás faroleros" class="brand__tagline" />
+            </ui:VisualElement>
+            <ui:VisualElement class="menu-columns">
+                <ui:VisualElement class="panel menu-card menu-card--narrow">
+                    <ui:Label text="Tu farolero" class="panel__title" />
+                    <ui:TextField name="player-name" label="Nombre" max-length="16" class="field" />
+                    <ui:Label text="Color preferido" class="section__title" />
+                    <ui:VisualElement name="color-picker" class="color-picker" />
+                    <ui:Label name="color-name" class="color-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="panel menu-card">
+                    <ui:Label text="Jugar" class="panel__title" />
+                    <ui:Label text="Crear sala" class="section__title" />
+                    <ui:Label text="Tu equipo será el anfitrión y también jugará. Comparte tu IP con los demás." class="section__hint" />
+                    <ui:VisualElement class="field-row">
+                        <ui:TextField name="host-port" label="Puerto" max-length="5" class="field field--short" />
+                        <ui:Button name="host-button" text="Crear sala" class="button button--primary" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="divider" />
+                    <ui:Label text="Unirse a una sala" class="section__title" />
+                    <ui:VisualElement class="field-row">
+                        <ui:TextField name="join-address" label="IP del anfitrión" max-length="15" class="field" />
+                        <ui:TextField name="join-port" label="Puerto" max-length="5" class="field field--short" />
+                    </ui:VisualElement>
+                    <ui:Button name="join-button" text="Unirse" class="button" />
+                    <ui:Label name="menu-status" class="status-text" />
+                </ui:VisualElement>
+                <ui:VisualElement class="panel menu-card">
+                    <ui:Label text="Cómo jugar" class="panel__title" />
+                    <ui:VisualElement class="howto-item">
+                        <ui:VisualElement class="icon icon--firefly" />
+                        <ui:Label text="Pasa sobre las luciérnagas para atraparlas. Solo puedes cargar unas pocas a la vez." class="howto-text" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="howto-item">
+                        <ui:VisualElement class="icon icon--player" />
+                        <ui:Label text="Llévalas al altar de tu color para convertirlas en puntos." class="howto-text" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="howto-item">
+                        <ui:VisualElement class="icon icon--dash" />
+                        <ui:Label text="Embiste a un rival: suelta todo lo que lleva y queda aturdido un instante." class="howto-text" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="howto-item">
+                        <ui:VisualElement class="icon icon--crown" />
+                        <ui:Label text="Gana quien llegue primero a la meta o tenga más puntos al acabar el tiempo. La dorada vale 3." class="howto-text" />
+                    </ui:VisualElement>
+                    <ui:Label text="Moverse: WASD o flechas  |  Embestida: Espacio  |  Ping: TAB" class="howto-keys" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Button name="quit-button" text="Salir del juego" class="button button--ghost quit-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

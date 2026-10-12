@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="results" class="screen screen--results overlay-dim screen--hidden">
+        <ui:VisualElement class="panel results-card">
+            <ui:VisualElement class="icon icon--hero icon--crown" />
+            <ui:Label name="results-title" class="results-title" />
+            <ui:Label name="results-subtitle" class="results-subtitle" />
+            <ui:VisualElement name="results-podium" class="podium" />
+            <ui:VisualElement class="results-actions">
+                <ui:Button name="results-leave" text="Salir" class="button button--ghost" />
+                <ui:Button name="results-lobby" text="Volver a la sala" class="button" />
+                <ui:Button name="results-rematch" text="Nueva partida" class="button button--primary" />
+                <ui:Label name="results-waiting" text="Esperando al anfitrión..." class="waiting-text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdb5260f83218894fb8b34f05e923c82, type: 3}
+  m_Name: PlayerPalette
+  m_EditorClassIdentifier: 
+  _slots:
+  - _displayName: "\xC1mbar"
+    _color: {r: 1, g: 0.8235294, b: 0.24705882, a: 1}
+    _portrait: {fileID: 21300000, guid: af34dedec2593654a8ae8b4b1bfc23f2, type: 3}
+  - _displayName: Cian
+    _color: {r: 0.23137255, g: 0.80784315, b: 0.6745098, a: 1}
+    _portrait: {fileID: 21300000, guid: d1479b87640d54d43acc910c21d13546, type: 3}
+  - _displayName: Magenta
+    _color: {r: 0.93333334, g: 0.25882354, b: 0.4, a: 1}
+    _portrait: {fileID: 21300000, guid: 7e4dfe450fb109c49881ac63c63ca25d, type: 3}
+  - _displayName: Verde
+    _color: {r: 0.48235294, g: 0.827451, b: 0.5372549, a: 1}
+    _portrait: {fileID: 21300000, guid: 4067b0704b8899c43b954d8bf636ed24, type: 3}

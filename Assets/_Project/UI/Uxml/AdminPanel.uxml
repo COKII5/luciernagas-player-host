@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="admin" class="screen overlay-dim screen--hidden">
+        <ui:VisualElement class="panel admin-card">
+            <ui:VisualElement class="admin-header">
+                <ui:Label text="Panel del anfitrión" class="panel__title" />
+                <ui:Button name="admin-close" text="Cerrar (F1)" class="button button--ghost button--small" />
+            </ui:VisualElement>
+            <ui:VisualElement class="admin-columns">
+                <ui:VisualElement class="admin-column">
+                    <ui:Label text="Jugadores conectados" class="section__title" />
+                    <ui:VisualElement name="admin-player-list" class="player-list" />
+                    <ui:Label text="Direcciones IP baneadas" class="section__title" />
+                    <ui:VisualElement name="admin-ban-list" />
+                </ui:VisualElement>
+                <ui:VisualElement class="admin-column">
+                    <ui:Label text="Reglas (se aplican al instante)" class="section__title" />
+                    <ui:VisualElement name="admin-rules-editor" class="rules-editor" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement class="admin-actions">
+                <ui:Button name="admin-pause" text="Pausar partida" class="button" />
+                <ui:Button name="admin-lobby" text="Terminar y volver a la sala" class="button button--danger" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

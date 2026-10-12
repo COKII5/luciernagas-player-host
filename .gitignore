@@ -1,0 +1,44 @@
+# Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+crashlytics-build.properties
+*.apk
+*.aab
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Blender backups
+*.blend1
+*.blend2
+
+# Local context (not part of the delivery)
+CLAUDE.md
+.claude/
+Penalizaciones*.xlsx

@@ -1,0 +1,28 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement class="layer" picking-mode="Ignore">
+        <ui:VisualElement name="toast-stack" class="toast-stack" picking-mode="Ignore" />
+        <ui:VisualElement name="ping-table" class="ping-table hidden" picking-mode="Ignore">
+            <ui:VisualElement class="panel" picking-mode="Ignore">
+                <ui:Label text="Latencia de los jugadores" class="panel__title" />
+                <ui:VisualElement name="ping-table-list" class="player-list" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="debug-overlay" class="debug-overlay hidden" picking-mode="Ignore">
+            <ui:Label name="debug-text" picking-mode="Ignore" />
+        </ui:VisualElement>
+        <ui:VisualElement name="connecting" class="screen overlay-dim screen--hidden">
+            <ui:VisualElement class="panel dialog">
+                <ui:VisualElement name="connecting-spinner" class="spinner" />
+                <ui:Label name="connecting-text" class="dialog__text" />
+                <ui:Button name="connecting-cancel" text="Cancelar" class="button button--ghost" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="dialog" class="screen overlay-dim screen--hidden">
+            <ui:VisualElement class="panel dialog">
+                <ui:Label name="dialog-title" class="panel__title" />
+                <ui:Label name="dialog-text" class="dialog__text" />
+                <ui:Button name="dialog-ok" text="Aceptar" class="button button--primary" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

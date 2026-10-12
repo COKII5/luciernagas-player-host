@@ -1,0 +1,42 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="hud" class="screen screen--hidden" picking-mode="Ignore">
+        <ui:VisualElement class="hud-top" picking-mode="Ignore">
+            <ui:VisualElement name="hud-scoreboard" class="scoreboard" picking-mode="Ignore" />
+            <ui:VisualElement name="hud-timer-box" class="panel-chip timer" picking-mode="Ignore">
+                <ui:VisualElement class="icon icon--timer" />
+                <ui:Label name="hud-timer" text="3:00" class="timer__value" />
+            </ui:VisualElement>
+            <ui:VisualElement name="hud-host-tools" class="hud-host-tools" picking-mode="Ignore">
+                <ui:Button name="hud-pause" tooltip="Pausar o reanudar (P)" class="icon-button">
+                    <ui:VisualElement class="icon icon--pause" picking-mode="Ignore" />
+                </ui:Button>
+                <ui:Button name="hud-admin" tooltip="Panel del anfitrión (F1)" class="icon-button">
+                    <ui:VisualElement class="icon icon--settings" picking-mode="Ignore" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label name="hud-objective" class="objective" picking-mode="Ignore" />
+        <ui:VisualElement class="hud-bottom" picking-mode="Ignore">
+            <ui:VisualElement name="hud-carry" class="panel-chip carry" picking-mode="Ignore">
+                <ui:VisualElement class="icon icon--firefly" />
+                <ui:Label name="hud-carried" text="0 / 5" class="carry__value" />
+            </ui:VisualElement>
+            <ui:VisualElement name="hud-dash" class="panel-chip dash" picking-mode="Ignore">
+                <ui:VisualElement class="icon icon--dash" />
+                <ui:VisualElement class="dash__bar">
+                    <ui:VisualElement name="hud-dash-fill" class="dash__fill" />
+                </ui:VisualElement>
+                <ui:Label text="Espacio" class="dash__key" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label name="hud-countdown" class="countdown" picking-mode="Ignore" />
+        <ui:VisualElement name="hud-pause-overlay" class="pause-overlay hidden">
+            <ui:VisualElement class="panel dialog">
+                <ui:VisualElement class="icon icon--pause icon--large" />
+                <ui:Label text="Partida en pausa" class="panel__title" />
+                <ui:Label name="hud-pause-text" class="dialog__text" />
+                <ui:Button name="hud-resume" text="Reanudar" class="button button--primary" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

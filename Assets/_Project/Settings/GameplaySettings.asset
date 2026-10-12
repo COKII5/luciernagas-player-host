@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6d30d31e05354f4299543864497dcee, type: 3}
+  m_Name: GameplaySettings
+  m_EditorClassIdentifier: 
+  _moveSpeed: 6
+  _dashSpeed: 17
+  _dashDuration: 0.18
+  _stunDuration: 0.6
+  _knockbackDistance: 1.2
+  _playerRadius: 0.5
+  _arenaRadius: 15
+  _altarDistanceFromCenter: 11
+  _spawnOffsetTowardCenter: 2.2
+  _pickupRadius: 0.9
+  _depositRadius: 2
+  _goldenValue: 3
+  _altarSpawnClearance: 3
+  _scatterRadius: 2.5
+  _scatterDuration: 0.45
+  _spawnAttempts: 12
+  _countdownSeconds: 3
+  _defaultRules:
+    _targetScore: 20
+    _durationSeconds: 180
+    _spawnInterval: 1.2
+    _maxFirefliesOnField: 14
+    _carryCapacity: 5
+    _dashCooldown: 2
+    _dashEnabled: 1
+    _goldenChance: 0.08

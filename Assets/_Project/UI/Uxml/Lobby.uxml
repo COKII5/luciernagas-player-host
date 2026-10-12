@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="lobby" class="screen screen--hidden" picking-mode="Ignore">
+        <ui:VisualElement class="lobby-header" picking-mode="Ignore">
+            <ui:Label text="Sala de espera" class="screen-title" />
+            <ui:Label name="lobby-address" class="lobby-address" />
+        </ui:VisualElement>
+        <ui:VisualElement class="panel lobby-side lobby-side--left">
+            <ui:Label text="Jugadores" class="panel__title" />
+            <ui:VisualElement name="lobby-player-list" class="player-list" />
+            <ui:Label text="Mientras esperan pueden recorrer el claro y probar la embestida." class="section__hint" />
+        </ui:VisualElement>
+        <ui:VisualElement class="panel lobby-side lobby-side--right">
+            <ui:Label text="Reglas de la partida" class="panel__title" />
+            <ui:VisualElement name="lobby-rules-editor" class="rules-editor" />
+            <ui:Label name="lobby-rules-hint" class="section__hint" />
+        </ui:VisualElement>
+        <ui:VisualElement class="lobby-footer" picking-mode="Ignore">
+            <ui:Button name="lobby-leave" text="Salir de la sala" class="button button--ghost" />
+            <ui:Label name="lobby-waiting" text="Esperando a que el anfitrión inicie la partida..." class="waiting-text" />
+            <ui:Button name="lobby-start" text="Iniciar partida" class="button button--primary button--large" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
