@@ -42,3 +42,6 @@ crashlytics-build.properties
 CLAUDE.md
 .claude/
 Penalizaciones*.xlsx
+
+# Escena de trabajo de Blender (no es un asset del juego)
+ArtSource/Blender/workingScene.blend
