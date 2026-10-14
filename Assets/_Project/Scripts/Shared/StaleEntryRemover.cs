@@ -5,7 +5,11 @@ namespace Fireflies.Shared
 {
     public static class StaleEntryRemover
     {
-        public static void RemoveUnseen<TKey, TValue>(Dictionary<TKey, TValue> entries, HashSet<TKey> seenKeys, List<TKey> buffer, Action<TValue> onRemoved)
+        public static void RemoveUnseen<TKey, TValue>(
+            Dictionary<TKey, TValue> entries,
+            HashSet<TKey> seenKeys,
+            List<TKey> buffer,
+            Action<TValue> onRemoved)
         {
             buffer.Clear();
             foreach (TKey key in entries.Keys)

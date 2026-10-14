@@ -30,8 +30,12 @@ namespace Fireflies.App.Input
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null)
             {
-                move.x = AxisFromKeys(keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed, keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed);
-                move.y = AxisFromKeys(keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed, keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed);
+                move.x = AxisFromKeys(
+                    keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed,
+                    keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed);
+                move.y = AxisFromKeys(
+                    keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed,
+                    keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed);
             }
 
             Gamepad gamepad = Gamepad.current;

@@ -16,13 +16,34 @@ namespace Fireflies.UI.Widgets
 
         private static readonly RuleDefinition[] Definitions =
         {
-            new RuleDefinition("Puntos para ganar", rules => rules.TargetScore.ToString(), (rules, step) => rules.TargetScore += step * TargetScoreStep),
-            new RuleDefinition("Duración", rules => UiFormat.Clock(rules.DurationSeconds), (rules, step) => rules.DurationSeconds += step * DurationStepSeconds),
-            new RuleDefinition("Aparición cada", rules => $"{rules.SpawnInterval:0.0} s", (rules, step) => rules.SpawnInterval += step * SpawnIntervalStep),
-            new RuleDefinition("Máximo en el claro", rules => rules.FireflyLimit.ToString(), (rules, step) => rules.FireflyLimit += step * FireflyLimitStep),
-            new RuleDefinition("Capacidad del farol", rules => rules.CarryCapacity.ToString(), (rules, step) => rules.CarryCapacity += step),
-            new RuleDefinition("Recarga de embestida", rules => $"{rules.DashCooldown:0.0} s", (rules, step) => rules.DashCooldown += step * DashCooldownStep),
-            new RuleDefinition("Embestida", rules => rules.DashEnabled ? "Sí" : "No", (rules, step) => rules.DashEnabled = !rules.DashEnabled)
+            new RuleDefinition(
+                "Puntos para ganar",
+                rules => rules.TargetScore.ToString(),
+                (rules, step) => rules.TargetScore += step * TargetScoreStep),
+            new RuleDefinition(
+                "Duración",
+                rules => UiFormat.Clock(rules.DurationSeconds),
+                (rules, step) => rules.DurationSeconds += step * DurationStepSeconds),
+            new RuleDefinition(
+                "Aparición cada",
+                rules => $"{rules.SpawnInterval:0.0} s",
+                (rules, step) => rules.SpawnInterval += step * SpawnIntervalStep),
+            new RuleDefinition(
+                "Máximo en el claro",
+                rules => rules.FireflyLimit.ToString(),
+                (rules, step) => rules.FireflyLimit += step * FireflyLimitStep),
+            new RuleDefinition(
+                "Capacidad del farol",
+                rules => rules.CarryCapacity.ToString(),
+                (rules, step) => rules.CarryCapacity += step),
+            new RuleDefinition(
+                "Recarga de embestida",
+                rules => $"{rules.DashCooldown:0.0} s",
+                (rules, step) => rules.DashCooldown += step * DashCooldownStep),
+            new RuleDefinition(
+                "Embestida",
+                rules => rules.DashEnabled ? "Sí" : "No",
+                (rules, step) => rules.DashEnabled = !rules.DashEnabled)
         };
 
         private readonly VisualElement _container;

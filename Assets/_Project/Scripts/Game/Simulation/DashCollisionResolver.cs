@@ -39,7 +39,12 @@ namespace Fireflies.Game.Simulation
             return null;
         }
 
-        private static void ApplyHit(SimPlayer attacker, SimPlayer victim, GameplaySettings settings, FireflyField field, List<GameEvent> events)
+        private static void ApplyHit(
+            SimPlayer attacker,
+            SimPlayer victim,
+            GameplaySettings settings,
+            FireflyField field,
+            List<GameEvent> events)
         {
             int dropped = victim.CarriedCount;
             field.Scatter(victim.Motion.Position, victim.CarriedNormal, victim.CarriedGolden);

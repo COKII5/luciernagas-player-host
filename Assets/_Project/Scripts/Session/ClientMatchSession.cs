@@ -128,7 +128,8 @@ namespace Fireflies.Session
                 case PacketType.GameEvent when PacketCodec.TryReadPayload(packet, GameEventMessage.Read, out GameEventMessage gameEvent):
                     GameEventRaised?.Invoke(gameEvent.Event);
                     break;
-                case PacketType.MatchResults when PacketCodec.TryReadPayload(packet, MatchResultsMessage.Read, out MatchResultsMessage results):
+                case PacketType.MatchResults
+                    when PacketCodec.TryReadPayload(packet, MatchResultsMessage.Read, out MatchResultsMessage results):
                     MatchFinished?.Invoke(results.Entries);
                     break;
             }

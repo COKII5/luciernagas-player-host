@@ -33,7 +33,9 @@ namespace Fireflies.UI.Overlays
                 SessionEndReason.Banned => ("Baneado", "El anfitrión bloqueó tu dirección IP en esta sala."),
                 SessionEndReason.HostClosed => ("Sala cerrada", "El anfitrión cerró la sala."),
                 SessionEndReason.ConnectionLost => ("Conexión perdida", "Dejamos de recibir datos del anfitrión."),
-                SessionEndReason.ConnectionFailed => ("Sin respuesta", "No se encontró una sala en esa IP y puerto. Revisa los datos y el firewall."),
+                SessionEndReason.ConnectionFailed => (
+                    "Sin respuesta",
+                    "No se encontró una sala en esa IP y puerto. Revisa los datos y el firewall."),
                 SessionEndReason.RejectedBanned => ("Acceso denegado", "Tu dirección IP está baneada en esta sala."),
                 SessionEndReason.RejectedFull => ("Sala llena", "La sala ya tiene el máximo de jugadores."),
                 SessionEndReason.RejectedInvalidName => ("Nombre no válido", "Usa de 1 a 16 letras, números, espacios o guiones."),

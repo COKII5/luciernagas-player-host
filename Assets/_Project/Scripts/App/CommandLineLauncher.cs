@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Fireflies.App
 {
-    // Permite abrir host o cliente desde la consola para probar varias instancias (incluso con -batchmode).
+    // Probar la red exige varias instancias; a mano serían muchos clics en cada ventana.
     public sealed class CommandLineLauncher : MonoBehaviour
     {
         private const string DefaultNamePrefix = "Jugador";
@@ -90,7 +90,9 @@ namespace Fireflies.App
         {
             int port = _options.Port ?? _runner.NetworkSettings.DefaultPort;
             string requestedName = PlayerNameRules.Normalize(_options.PlayerName);
-            string playerName = PlayerNameRules.IsValid(requestedName) ? requestedName : DefaultNamePrefix + Random.Range(MinRandomNameSuffix, MaxRandomNameSuffix);
+            string playerName = PlayerNameRules.IsValid(requestedName)
+                ? requestedName
+                : DefaultNamePrefix + Random.Range(MinRandomNameSuffix, MaxRandomNameSuffix);
             byte slot = _options.Slot ?? 0;
 
             if (_options.HostRequested)
@@ -146,8 +148,11 @@ namespace Fireflies.App
         private void LogStatus(IMatchSession session)
         {
             string role = session.IsHost ? "host" : "client";
-            string diagnostics = session is ISyncDiagnostics sync ? $" rtt={sync.RoundTripMs}ms buffered={sync.BufferedSnapshots}" : string.Empty;
-            Debug.Log($"[Launcher] {role} players={session.Players.Count} phase={session.Phase} remaining={session.PhaseSecondsRemaining:0}s{diagnostics}");
+            string diagnostics = session is ISyncDiagnostics sync
+                ? $" rtt={sync.RoundTripMs}ms buffered={sync.BufferedSnapshots}"
+                : string.Empty;
+            Debug.Log($"[Launcher] {role} players={session.Players.Count} phase={session.Phase} "
+                + $"remaining={session.PhaseSecondsRemaining:0}s{diagnostics}");
         }
 
         private void Quit()

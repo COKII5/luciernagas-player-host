@@ -60,7 +60,9 @@ namespace Fireflies.Net.Connection
                 StoredBanList loaded = JsonUtility.FromJson<StoredBanList>(File.ReadAllText(_filePath));
                 _stored = loaded ?? new StoredBanList();
             }
-            catch (Exception exception) when (exception is IOException || exception is UnauthorizedAccessException || exception is ArgumentException)
+            catch (Exception exception) when (exception is IOException
+                || exception is UnauthorizedAccessException
+                || exception is ArgumentException)
             {
                 Debug.LogWarning($"[BanList] Could not read {_filePath}: {exception.Message}");
             }

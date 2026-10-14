@@ -4,7 +4,6 @@ using System.Net;
 
 namespace Fireflies.App
 {
-    // Ejemplos: Luciernagas.exe -host -name Ana | Luciernagas.exe -join 192.168.1.20 -port 7777
     public sealed class LaunchOptions
     {
         public bool HostRequested { get; private set; }
@@ -40,7 +39,7 @@ namespace Fireflies.App
             return options;
         }
 
-        // true si la opción usó el siguiente argumento como su valor.
+        // El valor de retorno le dice al bucle de argumentos si debe saltarse el siguiente.
         private bool TryApply(string option, string value)
         {
             switch (option)

@@ -107,7 +107,8 @@ namespace Fireflies.Game.Simulation
             foreach (SimPlayer player in _players)
             {
                 bool canCarryMore = player.CarriedCount < Rules.CarryCapacity;
-                if (canCarryMore && !player.Motion.IsStunned && Field.TryCollect(player.Motion.Position, _settings.PickupRadius, out bool isGolden))
+                bool canCollect = canCarryMore && !player.Motion.IsStunned;
+                if (canCollect && Field.TryCollect(player.Motion.Position, _settings.PickupRadius, out bool isGolden))
                 {
                     player.AddCarried(isGolden);
                 }

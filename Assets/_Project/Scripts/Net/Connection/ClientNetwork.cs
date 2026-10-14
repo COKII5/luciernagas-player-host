@@ -147,7 +147,12 @@ namespace Fireflies.Net.Connection
 
         private void HandleJoinAccepted(DecodedPacket packet)
         {
-            if (State != ClientConnectionState.Connecting || !PacketCodec.TryReadPayload(packet, JoinAcceptedMessage.Read, out JoinAcceptedMessage accepted))
+            if (State != ClientConnectionState.Connecting)
+            {
+                return;
+            }
+
+            if (!PacketCodec.TryReadPayload(packet, JoinAcceptedMessage.Read, out JoinAcceptedMessage accepted))
             {
                 return;
             }
@@ -158,7 +163,12 @@ namespace Fireflies.Net.Connection
 
         private void HandleJoinRejected(DecodedPacket packet)
         {
-            if (State != ClientConnectionState.Connecting || !PacketCodec.TryReadPayload(packet, JoinRejectedMessage.Read, out JoinRejectedMessage rejected))
+            if (State != ClientConnectionState.Connecting)
+            {
+                return;
+            }
+
+            if (!PacketCodec.TryReadPayload(packet, JoinRejectedMessage.Read, out JoinRejectedMessage rejected))
             {
                 return;
             }

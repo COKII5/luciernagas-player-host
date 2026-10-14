@@ -33,7 +33,11 @@ namespace Fireflies.UI.Screens
 
         protected override void BindElements()
         {
-            _playerList = new PlayerListView(Root.Q("admin-player-list"), _palette, playerId => HostAdministration?.Kick(playerId), playerId => HostAdministration?.Ban(playerId));
+            _playerList = new PlayerListView(
+                Root.Q("admin-player-list"),
+                _palette,
+                playerId => HostAdministration?.Kick(playerId),
+                playerId => HostAdministration?.Ban(playerId));
             _rulesEditor = new RulesEditorView(Root.Q("admin-rules-editor"));
             _banList = Root.Q("admin-ban-list");
             _pauseButton = Root.Q<Button>("admin-pause");

@@ -75,7 +75,8 @@ namespace Fireflies.UI.Widgets
             {
                 byte playerId = player.PlayerId;
                 row.Add(UiFactory.LabeledIconButton("icon--kick", "Expulsar", () => _onKick(playerId), "button", "button--small"));
-                row.Add(UiFactory.LabeledIconButton("icon--ban", "Banear", () => _onBan(playerId), "button", "button--small", "button--danger"));
+                row.Add(UiFactory.LabeledIconButton(
+                    "icon--ban", "Banear", () => _onBan(playerId), "button", "button--small", "button--danger"));
             }
 
             return row;

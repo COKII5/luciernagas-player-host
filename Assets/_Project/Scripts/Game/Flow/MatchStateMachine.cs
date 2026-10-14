@@ -19,7 +19,8 @@ namespace Fireflies.Game.Flow
         public bool HasTimeExpired => Phase == MatchPhase.Playing && SecondsRemaining <= 0f;
         public bool CanStartMatch => MatchPhaseRules.CanStartMatch(Phase);
 
-        private bool IsClockRunningOrPaused => Phase == MatchPhase.Playing || (Phase == MatchPhase.Paused && _phaseBeforePause == MatchPhase.Playing);
+        private bool IsClockRunningOrPaused =>
+            Phase == MatchPhase.Playing || (Phase == MatchPhase.Paused && _phaseBeforePause == MatchPhase.Playing);
 
         public void Tick(float deltaTime, int matchDurationSeconds)
         {
