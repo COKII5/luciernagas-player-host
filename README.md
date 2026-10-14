@@ -10,6 +10,10 @@ Proyecto del curso **Servicios Multimedia** (Universidad), Unity 6 + UDP.
 
 - Ricardo J Cortes
 
+## Video de demostración
+
+[Ver el video en OneDrive](https://academiausbbogedu-my.sharepoint.com/:f:/g/personal/rjcortesp_academia_usbbog_edu_co/IgDepAQEExuPRYiWhiaI3u_1ARX9qbfSuXSZMnVxhvl5uxo?e=nLifro)
+
 ## Descripción del juego
 
 Es de noche en un claro del bosque. Cada jugador es un **farolero** de un color (ámbar, cian, magenta o verde) y tiene un **altar** propio en una esquina del claro.
