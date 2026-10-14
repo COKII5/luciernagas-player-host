@@ -8,7 +8,7 @@ Proyecto del curso **Servicios Multimedia** (Universidad), Unity 6 + UDP.
 
 ## Integrantes
 
-- _(completar con los nombres del grupo)_
+- Ricardo J Cortes
 
 ## Descripción del juego
 
