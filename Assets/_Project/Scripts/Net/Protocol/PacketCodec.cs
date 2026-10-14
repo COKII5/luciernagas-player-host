@@ -10,10 +10,11 @@ namespace Fireflies.Net.Protocol
         private const int ChannelOffset = 2;
         private const int SequenceOffset = 3;
         private const int TypeOffset = 5;
+        private const int InitialBufferSize = 64;
 
         public static byte[] Encode(DeliveryChannel channel, ushort sequence, INetMessage message)
         {
-            using MemoryStream stream = new MemoryStream(64);
+            using MemoryStream stream = new MemoryStream(InitialBufferSize);
             using BinaryWriter writer = new BinaryWriter(stream);
             WriteHeader(writer, channel, sequence, message.Type);
             message.Write(writer);
@@ -65,7 +66,9 @@ namespace Fireflies.Net.Protocol
                 message = read(reader);
                 return true;
             }
-            catch (Exception exception) when (exception is IOException || exception is InvalidDataException || exception is ArgumentException)
+            catch (Exception exception) when (exception is IOException
+                || exception is InvalidDataException
+                || exception is ArgumentException)
             {
                 Debug.LogWarning($"[PacketCodec] Malformed {packet.Type} packet discarded: {exception.Message}");
                 message = default;

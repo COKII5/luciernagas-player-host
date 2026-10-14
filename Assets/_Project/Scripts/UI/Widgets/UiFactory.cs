@@ -6,6 +6,7 @@ namespace Fireflies.UI.Widgets
     public static class UiFactory
     {
         public const string HiddenClass = "hidden";
+        public const string ChipClass = "panel-chip";
 
         public static void SetDisplayed(VisualElement element, bool isDisplayed)
         {

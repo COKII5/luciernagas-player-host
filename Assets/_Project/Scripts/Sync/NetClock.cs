@@ -5,6 +5,8 @@ namespace Fireflies.Sync
     public sealed class NetClock
     {
         private const double OffsetSmoothing = 0.1;
+        private const double MillisecondsPerSecond = 1000.0;
+        private const double OneWayFraction = 0.5;
 
         private readonly double _resyncThreshold;
         private double _offset;
@@ -28,7 +30,7 @@ namespace Fireflies.Sync
 
         public void AddSample(double hostTime, int roundTripMs, double localNow)
         {
-            double sampleOffset = hostTime + roundTripMs / 2000.0 - localNow;
+            double sampleOffset = hostTime + roundTripMs * OneWayFraction / MillisecondsPerSecond - localNow;
             if (!_isSynchronized || Math.Abs(sampleOffset - _offset) > _resyncThreshold)
             {
                 Resynchronize(sampleOffset);

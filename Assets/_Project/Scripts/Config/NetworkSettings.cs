@@ -5,8 +5,11 @@ namespace Fireflies.Config
     [CreateAssetMenu(fileName = "NetworkSettings", menuName = "Fireflies/Network Settings")]
     public sealed class NetworkSettings : ScriptableObject
     {
+        public const int MinPort = 1024;
+        public const int MaxPort = 65535;
+
         [Header("Connection")]
-        [SerializeField, Range(1024, 65535)] private int _defaultPort = 7777;
+        [SerializeField, Range(MinPort, MaxPort)] private int _defaultPort = 7777;
         [SerializeField, Range(2, 4)] private int _maxPlayers = 4;
         [SerializeField, Min(0.1f)] private float _joinRetryInterval = 0.5f;
         [SerializeField, Min(1f)] private float _joinTimeout = 5f;

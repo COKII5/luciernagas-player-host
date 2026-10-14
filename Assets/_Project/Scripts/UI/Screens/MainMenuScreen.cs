@@ -18,7 +18,6 @@ namespace Fireflies.UI.Screens
         private const string DefaultJoinAddress = "127.0.0.1";
         private const string SelectedColorClass = "color-option--selected";
         private const string InvalidFieldClass = "field--invalid";
-        private const int MinPort = 1024;
 
         [SerializeField] private PlayerPalette _palette;
 
@@ -138,14 +137,15 @@ namespace Fireflies.UI.Screens
 
         private bool TryReadAddress(out IPAddress address)
         {
-            bool isValid = IPAddress.TryParse(_joinAddressField.value.Trim(), out address) && address.AddressFamily == AddressFamily.InterNetwork;
+            bool isParsed = IPAddress.TryParse(_joinAddressField.value.Trim(), out address);
+            bool isValid = isParsed && address.AddressFamily == AddressFamily.InterNetwork;
             return Validate(_joinAddressField, isValid, "La IP debe tener el formato 192.168.1.20.");
         }
 
         private bool TryReadPort(TextField field, out int port)
         {
-            bool isValid = int.TryParse(field.value.Trim(), out port) && port >= MinPort && port <= IPEndPoint.MaxPort;
-            return Validate(field, isValid, "El puerto debe ser un número entre 1024 y 65535.");
+            bool isValid = int.TryParse(field.value.Trim(), out port) && port >= NetworkSettings.MinPort && port <= NetworkSettings.MaxPort;
+            return Validate(field, isValid, $"El puerto debe ser un número entre {NetworkSettings.MinPort} y {NetworkSettings.MaxPort}.");
         }
 
         private bool Validate(TextField field, bool isValid, string errorMessage)

@@ -17,6 +17,13 @@ namespace Fireflies.UI.Screens
         private const string GoMessage = "¡A brillar!";
         private const string HostPauseText = "Pausaste la partida. Todos ven este aviso hasta que la reanudes.";
         private const string ClientPauseText = "El anfitrión pausó la partida.";
+        private const string ScoreChipClass = "score-chip";
+        private const string LocalScoreChipClass = "score-chip--local";
+        private const string UrgentTimerClass = "timer--urgent";
+        private const string CountdownPopClass = "countdown--pop";
+        private const string FullCarryClass = "carry--full";
+        private const string DashReadyClass = "dash--ready";
+        private const string DashDisabledClass = "dash--disabled";
 
         [SerializeField] private PlayerPalette _palette;
         [SerializeField] private AdminPanelScreen _adminPanel;
@@ -123,8 +130,8 @@ namespace Fireflies.UI.Screens
             _scoreValues.Clear();
             foreach (PlayerInfo player in Session.Players)
             {
-                VisualElement chip = UiFactory.Element("panel-chip", "score-chip");
-                chip.EnableInClassList("score-chip--local", player.PlayerId == Session.LocalPlayerId);
+                VisualElement chip = UiFactory.Element(UiFactory.ChipClass, ScoreChipClass);
+                chip.EnableInClassList(LocalScoreChipClass, player.PlayerId == Session.LocalPlayerId);
                 VisualElement dot = UiFactory.Element("score-chip__dot");
                 dot.style.backgroundColor = _palette.GetColor(player.Slot);
                 chip.Add(dot);
@@ -148,10 +155,11 @@ namespace Fireflies.UI.Screens
 
         private void UpdateTimer()
         {
-            bool isCountingDown = Session.Phase == MatchPhase.Countdown || (Session.Phase == MatchPhase.Paused && _phaseBeforePause == MatchPhase.Countdown);
+            bool isPausedInCountdown = Session.Phase == MatchPhase.Paused && _phaseBeforePause == MatchPhase.Countdown;
+            bool isCountingDown = Session.Phase == MatchPhase.Countdown || isPausedInCountdown;
             float seconds = isCountingDown ? Session.Rules.DurationSeconds : Session.PhaseSecondsRemaining;
             _timer.text = UiFormat.Clock(seconds);
-            _timerBox.EnableInClassList("timer--urgent", Session.Phase == MatchPhase.Playing && seconds <= UrgentSeconds);
+            _timerBox.EnableInClassList(UrgentTimerClass, Session.Phase == MatchPhase.Playing && seconds <= UrgentSeconds);
         }
 
         private void UpdateCountdown()
@@ -160,14 +168,14 @@ namespace Fireflies.UI.Screens
             if (Session.Phase == MatchPhase.Countdown)
             {
                 int value = Mathf.CeilToInt(Session.PhaseSecondsRemaining);
-                _countdown.EnableInClassList("countdown--pop", value != _lastCountdownValue);
+                _countdown.EnableInClassList(CountdownPopClass, value != _lastCountdownValue);
                 _lastCountdownValue = value;
                 _countdown.text = value > 0 ? value.ToString() : string.Empty;
                 return;
             }
 
             _lastCountdownValue = 0;
-            _countdown.RemoveFromClassList("countdown--pop");
+            _countdown.RemoveFromClassList(CountdownPopClass);
             _countdown.text = _goMessageTimeLeft > 0f ? GoMessage : string.Empty;
         }
 
@@ -216,13 +224,13 @@ namespace Fireflies.UI.Screens
             int carried = local.CarriedNormal + local.CarriedGolden;
             int capacity = Session.Rules.CarryCapacity;
             _carried.text = $"{carried} / {capacity}";
-            _carryBox.EnableInClassList("carry--full", carried >= capacity);
+            _carryBox.EnableInClassList(FullCarryClass, carried >= capacity);
 
             bool dashEnabled = Session.Rules.DashEnabled;
             float charge = dashEnabled ? 1f - Mathf.Clamp01(local.DashCooldownLeft / Session.Rules.DashCooldown) : 0f;
             _dashFill.style.width = Length.Percent(charge * 100f);
-            _dashBox.EnableInClassList("dash--ready", dashEnabled && charge >= 1f);
-            _dashBox.EnableInClassList("dash--disabled", !dashEnabled);
+            _dashBox.EnableInClassList(DashReadyClass, dashEnabled && charge >= 1f);
+            _dashBox.EnableInClassList(DashDisabledClass, !dashEnabled);
         }
     }
 }
