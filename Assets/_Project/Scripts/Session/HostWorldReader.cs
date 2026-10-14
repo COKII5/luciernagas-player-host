@@ -43,7 +43,7 @@ namespace Fireflies.Session
             foreach (SimFirefly firefly in simulation.Field.Fireflies)
             {
                 Vector2 position = Vector2.Lerp(firefly.PreviousPosition, firefly.Position, fixedStepAlpha);
-                target.Fireflies.Add(new FireflyRenderState { FireflyId = firefly.FireflyId, Position = position, IsGolden = firefly.IsGolden });
+                target.Fireflies.Add(new FireflyRenderState(firefly.FireflyId, position, firefly.IsGolden));
             }
         }
 

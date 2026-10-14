@@ -1,4 +1,5 @@
 using Fireflies.Session;
+using Fireflies.Shared;
 using UnityEngine;
 
 namespace Fireflies.App.Input
@@ -19,8 +20,7 @@ namespace Fireflies.App.Input
             _secondsUntilTurn -= Time.fixedDeltaTime;
             if (_secondsUntilTurn <= 0f)
             {
-                float angle = (float)(_random.NextDouble() * Mathf.PI * 2.0);
-                _direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                _direction = _random.NextUnitDirection();
                 _secondsUntilTurn = Mathf.Lerp(MinWanderSeconds, MaxWanderSeconds, (float)_random.NextDouble());
             }
 

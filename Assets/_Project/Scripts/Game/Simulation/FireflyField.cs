@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Fireflies.Config;
 using Fireflies.Game.Rules;
+using Fireflies.Shared;
 using UnityEngine;
 
 namespace Fireflies.Game.Simulation
@@ -112,17 +113,16 @@ namespace Fireflies.Game.Simulation
 
         private Vector2 FindScatterTarget(Vector2 origin)
         {
-            float angle = (float)(_random.NextDouble() * Mathf.PI * 2.0);
-            float distance = Mathf.Lerp(_settings.ScatterRadius * MinScatterDistanceFraction, _settings.ScatterRadius, (float)_random.NextDouble());
-            Vector2 target = origin + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
+            float minDistance = _settings.ScatterRadius * MinScatterDistanceFraction;
+            float distance = Mathf.Lerp(minDistance, _settings.ScatterRadius, (float)_random.NextDouble());
+            Vector2 target = origin + _random.NextUnitDirection() * distance;
             return Vector2.ClampMagnitude(target, _layout.Radius - _settings.PickupRadius);
         }
 
         private Vector2 RandomPointInDisc(float radius)
         {
-            float angle = (float)(_random.NextDouble() * Mathf.PI * 2.0);
             float distance = radius * Mathf.Sqrt((float)_random.NextDouble());
-            return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
+            return _random.NextUnitDirection() * distance;
         }
     }
 }

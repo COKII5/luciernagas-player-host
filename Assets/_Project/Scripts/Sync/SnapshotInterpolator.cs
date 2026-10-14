@@ -111,7 +111,7 @@ namespace Fireflies.Sync
                     position = Vector2.Lerp(older.Position, newer.Position, blend);
                 }
 
-                target.Fireflies.Add(new FireflyRenderState { FireflyId = newer.FireflyId, Position = position, IsGolden = newer.IsGolden });
+                target.Fireflies.Add(new FireflyRenderState(newer.FireflyId, position, newer.IsGolden));
             }
         }
 
@@ -124,7 +124,7 @@ namespace Fireflies.Sync
 
             foreach (FireflySnapshot firefly in latest.Fireflies)
             {
-                target.Fireflies.Add(new FireflyRenderState { FireflyId = firefly.FireflyId, Position = firefly.Position, IsGolden = firefly.IsGolden });
+                target.Fireflies.Add(new FireflyRenderState(firefly.FireflyId, firefly.Position, firefly.IsGolden));
             }
         }
 

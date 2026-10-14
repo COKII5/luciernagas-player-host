@@ -17,34 +17,17 @@ namespace Fireflies.Presentation
         [SerializeField, Range(1, 200)] private int _particlesPerPoint = 6;
         [SerializeField, Range(1, 200)] private int _hitParticleCount = 18;
 
-        private IMatchSession _session;
+        private SessionBinder _binder;
 
         private void OnEnable()
         {
-            _runner.SessionStarted += Attach;
-            _runner.SessionEnded += Detach;
+            _binder = new SessionBinder(_runner, session => session.GameEventRaised += Play, session => session.GameEventRaised -= Play);
+            _binder.Enable();
         }
 
         private void OnDisable()
         {
-            _runner.SessionStarted -= Attach;
-            _runner.SessionEnded -= Detach;
-            Detach(SessionEndReason.LeftByUser);
-        }
-
-        private void Attach(IMatchSession session)
-        {
-            _session = session;
-            _session.GameEventRaised += Play;
-        }
-
-        private void Detach(SessionEndReason reason)
-        {
-            if (_session != null)
-            {
-                _session.GameEventRaised -= Play;
-                _session = null;
-            }
+            _binder.Disable();
         }
 
         private void Play(GameEvent gameEvent)
@@ -62,7 +45,7 @@ namespace Fireflies.Presentation
 
         private void PlayDeposit(GameEvent gameEvent)
         {
-            PlayerInfo player = _session.FindPlayer(gameEvent.PlayerId);
+            PlayerInfo player = _binder.Session.FindPlayer(gameEvent.PlayerId);
             if (player == null)
             {
                 return;

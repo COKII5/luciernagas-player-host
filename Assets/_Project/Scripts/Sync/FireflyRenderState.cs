@@ -7,5 +7,12 @@ namespace Fireflies.Sync
         public ushort FireflyId;
         public Vector2 Position;
         public bool IsGolden;
+
+        public FireflyRenderState(ushort fireflyId, Vector2 position, bool isGolden)
+        {
+            FireflyId = fireflyId;
+            Position = position;
+            IsGolden = isGolden;
+        }
     }
 }

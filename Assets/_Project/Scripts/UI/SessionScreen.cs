@@ -12,9 +12,11 @@ namespace Fireflies.UI
         [SerializeField] private UIDocument _document;
         [SerializeField] private SessionRunner _runner;
 
+        private SessionBinder _binder;
+
         protected VisualElement Root { get; private set; }
         protected SessionRunner Runner => _runner;
-        protected IMatchSession Session { get; private set; }
+        protected IMatchSession Session => _binder?.Session;
         protected IHostAdministration HostAdministration => Session as IHostAdministration;
 
         protected abstract string RootElementName { get; }
@@ -25,19 +27,13 @@ namespace Fireflies.UI
         {
             Root = _document.rootVisualElement.Q(RootElementName);
             BindElements();
-            _runner.SessionStarted += AttachSession;
-            _runner.SessionEnded += DetachSession;
-            if (_runner.Session != null)
-            {
-                AttachSession(_runner.Session);
-            }
+            _binder = new SessionBinder(_runner, OnSessionAttached, OnSessionDetached);
+            _binder.Enable();
         }
 
         protected virtual void OnDisable()
         {
-            _runner.SessionStarted -= AttachSession;
-            _runner.SessionEnded -= DetachSession;
-            DetachSession(SessionEndReason.LeftByUser);
+            _binder.Disable();
         }
 
         public void SetVisible(bool visible)
@@ -66,24 +62,6 @@ namespace Fireflies.UI
 
         protected virtual void OnShown()
         {
-        }
-
-        private void AttachSession(IMatchSession session)
-        {
-            Session = session;
-            OnSessionAttached(session);
-        }
-
-        private void DetachSession(SessionEndReason reason)
-        {
-            if (Session == null)
-            {
-                return;
-            }
-
-            IMatchSession previous = Session;
-            Session = null;
-            OnSessionDetached(previous);
         }
     }
 }
