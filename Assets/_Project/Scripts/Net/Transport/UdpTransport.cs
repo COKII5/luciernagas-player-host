@@ -44,8 +44,18 @@ namespace Fireflies.Net.Transport
                 throw new InvalidOperationException("The transport is already open.");
             }
 
-            _socket = new UdpClient(port);
-            IgnoreConnectionResetErrors();
+            UdpClient socket = new UdpClient(port);
+            try
+            {
+                IgnoreConnectionResetErrors(socket);
+            }
+            catch (Exception)
+            {
+                socket.Dispose();
+                throw;
+            }
+
+            _socket = socket;
             _receiveCancellation = new CancellationTokenSource();
             CancellationToken token = _receiveCancellation.Token;
             Task.Run(() => ReceiveLoop(token));
@@ -111,14 +121,14 @@ namespace Fireflies.Net.Transport
             _receiveCancellation = null;
         }
 
-        private void IgnoreConnectionResetErrors()
+        private static void IgnoreConnectionResetErrors(UdpClient socket)
         {
             if (Application.platform != RuntimePlatform.WindowsPlayer && Application.platform != RuntimePlatform.WindowsEditor)
             {
                 return;
             }
 
-            _socket.Client.IOControl(SioUdpConnectionReset, new byte[] { 0 }, null);
+            socket.Client.IOControl(SioUdpConnectionReset, new byte[] { 0 }, null);
         }
 
         private async Task ReceiveLoop(CancellationToken token)
